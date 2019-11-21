@@ -1,0 +1,14 @@
+version: "Apple Swift version 5.1.2 (swiftlang-1100.0.278 clang-1100.0.33.9)"
+options: "2d6e09e44191e26f6da11c9eb98dd3cd"
+build_time: [1574225851, 877548000]
+inputs:
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Models/CardEntity+CoreDataProperties.swift": [1573574140, 917903368]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Views/MainViewBGSVG.swift": [1574225851, 755351629]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Models/ClashRoyaleCards.swift": [1573765697, 437063753]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Controllers/ViewController.swift": [1573767538, 514823515]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Controllers/TableViewCell.swift": [1573578876, 103610099]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Views/AnimatedCard.swift": [1573768383, 74115312]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Models/Stack.swift": [1573766327, 118580048]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Service/CoreDataService.swift": [1573577971, 428564735]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/AppDelegate.swift": [1573584315, 484152378]
+  "/Users/stephan/Desktop/Swift 2019/CoreDataNew/CoreDataNew/Models/CardEntity+CoreDataClass.swift": [1573574867, 450749856]

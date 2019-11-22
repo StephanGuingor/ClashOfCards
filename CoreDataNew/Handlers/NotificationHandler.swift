@@ -7,30 +7,38 @@
 //
 
 import Foundation
-
+import UIKit
 import MultipeerConnectivity
+
 
 class MPCHandler: NSObject{
     var peerID: MCPeerID!
     var mcSession: MCSession!
-    var mcAdvertiserAssistant: MCAdvertiserAssistant? = nil
-    var browser: MCBrowserViewController!
-    var delegate:MCSessionDelegate?
+    var mcAdvertiserAssistant: MCAdvertiserAssistant!
     
-    func setUpPeerDisplayName(displayName:String){
-        peerID = MCPeerID(displayName: displayName)
-    }
     
-    func setUpSession(displayName: String){
-        peerID = MCPeerID(displayName: displayName)
+    
+    
+    
+    func initialSetUp(){
+        peerID = MCPeerID(displayName: UIDevice.current.name)
         mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
-        mcSession.delegate = delegate
-        
-    }
-    func setUpBrowser(){
-        browser = MCBrowserViewController(serviceType: "game", session: mcSession)
+        mcSession.delegate = self
     }
     
+   
+    func hostSession(){
+        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "game", discoveryInfo: nil, session: mcSession)
+        mcAdvertiserAssistant.start()
+    }
+    
+    func joinSession(delegate: MCBrowserViewControllerDelegate, from: UIViewController){
+        let browser = MCBrowserViewController(serviceType: "game", session: mcSession)
+               browser.delegate = delegate
+            from.present(browser, animated: true) {
+                   print("browser presented")
+               }
+    }
     func advertiseSelf(advertise: Bool){
         if advertise{
             mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "game", discoveryInfo: nil, session: mcSession)
@@ -52,8 +60,8 @@ extension MPCHandler:MCSessionDelegate{
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        let userInfo = ["peerID":peerID,"data":data] as [String : Any]
         DispatchQueue.main.async {
+            let userInfo = ["peerID":peerID,"data":data] as [String : Any]
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "MPC_DidRecieveDataNotification"), object: nil, userInfo: userInfo)
         }
     }

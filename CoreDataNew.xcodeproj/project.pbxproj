@@ -28,6 +28,7 @@
 		D48419B22385C16400FC2298 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48419B12385C16400FC2298 /* MainViewController.swift */; };
 		D48419B42385C83500FC2298 /* popUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48419B32385C83500FC2298 /* popUpViewController.swift */; };
 		D48419B62385EF9000FC2298 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48419B52385EF9000FC2298 /* GameViewController.swift */; };
+		D4BBD0F5238888A400CC3DD9 /* sendingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */; };
 		D4C316AA2386268600E6E717 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C316A92386268600E6E717 /* NotificationHandler.swift */; };
 		F141B8BB6B1A6966950FF220 /* Pods_CoreDataNew.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2813141298911AD53891FBD9 /* Pods_CoreDataNew.framework */; };
 /* End PBXBuildFile section */
@@ -59,6 +60,7 @@
 		D48419B12385C16400FC2298 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D48419B32385C83500FC2298 /* popUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = popUpViewController.swift; sourceTree = "<group>"; };
 		D48419B52385EF9000FC2298 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sendingDataModel.swift; sourceTree = "<group>"; };
 		D4C316A92386268600E6E717 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -128,6 +130,7 @@
 				D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */,
 				D454619E2379F82300466D70 /* ClashRoyaleCards.swift */,
 				D421C8FE237DEDD600BC1D12 /* Stack.swift */,
+				D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				D4560D92237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift in Sources */,
 				D48419B22385C16400FC2298 /* MainViewController.swift in Sources */,
 				D454619F2379F82300466D70 /* ClashRoyaleCards.swift in Sources */,
+				D4BBD0F5238888A400CC3DD9 /* sendingDataModel.swift in Sources */,
 				D454617E2379B9F900466D70 /* ViewController.swift in Sources */,
 				D4560D94237B1F3E004B92F2 /* TableViewCell.swift in Sources */,
 				D421C8FD237DA94E00BC1D12 /* AnimatedCard.swift in Sources */,

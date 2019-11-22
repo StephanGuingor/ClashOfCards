@@ -40,6 +40,8 @@ class GameViewController: UIViewController {
     
     var playersConnected:[Int:MCPeerID]?
     
+    ///This struct is in charge of sending all the data across devices
+    var dataToSendAsJSON: dataToJSON?
     
     
     override func viewDidLoad() {
@@ -77,25 +79,86 @@ class GameViewController: UIViewController {
         ///This observer is in charge of handling change in state notifications, adn running desired function
         NotificationCenter.default.addObserver(self, selector: #selector(peerChangedStateNotification), name: NSNotification.Name(rawValue: "MPC_DidChangeStateNotification"), object: nil)
     }
+//MARK: JSON FUNCTIONS
     
-    //MARK: Game SetUp
-    ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host
-
-
-    @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
-        messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
+    func encodeToJSON(name: String, index: Int, ready: Bool, cardID: String, targetPeer: Int) -> Data{
+        let encoder = JSONEncoder()
+        let messageToSend = dataToJSON(name: name, index: index, ready: ready, cardID: cardID, targetPeer: targetPeer)
         
-        guard let msg = messageToSend.data(using: .utf8,
-                                           allowLossyConversion: true) else {return}
-        do{
-            try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
-            
-        }catch{
+        do {
+            let dataToSend = try encoder.encode(messageToSend)
+
+            return dataToSend
+            //For Debug Use
+//            if let jsonString = String(data: dataToSend, encoding: .utf8) {
+//                print(jsonString)
+//            }
+        } catch {
             print(error.localizedDescription)
         }
+        return Data()
+    }
+    
+    func decodeToJSON(_ data: Data){
+        
+        do{
+            
+        let peerMessageRecieved = try JSONDecoder().decode(dataToJSON.self, from: data)
+        print(peerMessageRecieved.name)
+        }catch{
+            print("JSON Decode Failed \(error.localizedDescription)")
+        }
+       
     }
     
     
+    //MARK: Game SetUp
+    
+
+    @IBAction func toggleReady(_ sender: Any) {
+        
+        playerIsReady = !playerIsReady
+        switch playerIsReady{
+        case true:
+            readyUpButton.backgroundColor = UIColor.green
+            
+            readyUpButton.setAttributedTitle(NSAttributedString(string: "Ready", attributes: fontAttributes), for: .normal)
+            
+            
+        case false:
+            readyUpButton.backgroundColor = UIColor.red
+            
+            readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
+        }
+    }
+    
+    func sendStateIsReadyOrUnReady(_ message: String){
+        messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
+            
+            guard let msg = messageToSend.data(using: .utf8,
+                                               allowLossyConversion: true) else {return}
+            do{
+                try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+                
+            }catch{
+                print(error.localizedDescription)
+            }
+        }
+    
+
+    ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host
+    @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
+          messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
+          
+          guard let msg = messageToSend.data(using: .utf8,
+                                             allowLossyConversion: true) else {return}
+          do{
+              try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+              
+          }catch{
+              print(error.localizedDescription)
+          }
+      }
     
     func everyOneReadyUp(){
         
@@ -153,22 +216,7 @@ class GameViewController: UIViewController {
         
     }
     
-    @IBAction func toggleReady(_ sender: Any) {
-        
-        playerIsReady = !playerIsReady
-        switch playerIsReady{
-        case true:
-            readyUpButton.backgroundColor = UIColor.green
-            
-            readyUpButton.setAttributedTitle(NSAttributedString(string: "Ready", attributes: fontAttributes), for: .normal)
-            
-            
-        case false:
-            readyUpButton.backgroundColor = UIColor.red
-            
-            readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
-        }
-    }
+
     
     //MARK: MPC Handler
     
@@ -182,6 +230,7 @@ class GameViewController: UIViewController {
          appDelegate?.mpcHandler.hostSession()
      }
      
+    ///Function runned by observer in charge of data notifications
     @objc func recievedDataNotification(_ notification: Notification){
         let data = notification.userInfo!["data"] as? Data
         let recievedString = String(bytes: data!, encoding: .utf8)

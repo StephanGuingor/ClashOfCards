@@ -12,10 +12,10 @@ import UIKit
 class Stack<T>{
     private var listStack : [T] = []
     
-    func pop() -> Any {
+    func pop() -> T? {
         if listStack.count <= 0{
             print("empty stack")
-            return "Empty"
+            return nil
         }
         let tmp = listStack.last
         listStack.removeLast()
@@ -25,17 +25,18 @@ class Stack<T>{
     func push(value: T){
         listStack.append(value)
     }
-    
 }
 
-class HomeStack<T> : Stack<T>{
-    private var listStack : [T] = []
+class HomeStack : Stack<Cards>{
+    private var listStack : [Cards] = []
     
     func serve(player: Player){
         if listStack.count > 0{
-            let tmp = self.pop()
+            guard let tmp = self.pop() else {
+                return
+            }
             //animation to player
-            player.playerStack.push(value: tmp as! Cards)
+            player.playerStack.push(value: tmp)
         }
     }
     func shuffle(){
@@ -43,17 +44,48 @@ class HomeStack<T> : Stack<T>{
     }
     
     func generateCards(){
-        
+        let url = URL(string: "http://www.clashapi.xyz/api/cards")!
+               let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+                   
+                   if let error = error{
+                       print(error.localizedDescription)
+                       return
+                   }
+                   guard let data = data else{
+                       print("Error while loading")
+                       return
+                   }
+                    guard let resp = response else{
+                       
+                       return
+                   }
+                //Transaction information
+                print(resp)
+                   do{
+                       
+                       
+                       let decoder = JSONDecoder()
+                        self.listStack = try decoder.decode([Cards].self, from: data)
+                      
+                   }catch{
+                       print("Error while decoding JSON in HomeStack")
+                       return
+                   }
+               }
+               task.resume()
+               
     }
 }
 
 
-class PlayerStack<T> : Stack<T>{
-    private var listStack : [T] = []
+class PlayerStack : Stack<Cards>{
+    private var listStack : [Cards] = []
     
-    func grab(hStack: Stack<T>){
-        let tmp = hStack.pop()
-        self.push(value: tmp as! T)
+    func grab(hStack: Stack<Cards>){
+        guard let tmp = hStack.pop() else {
+            return
+        }
+        self.push(value: tmp)
         
     }
 
@@ -61,9 +93,9 @@ class PlayerStack<T> : Stack<T>{
 
 
 class Player{
-    let playerStack : PlayerStack<Cards>
+    let playerStack : PlayerStack
     
-    init(playerStack: PlayerStack<Cards>){
+    init(playerStack: PlayerStack){
         self.playerStack = playerStack
     }
 }

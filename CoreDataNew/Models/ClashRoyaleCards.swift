@@ -10,7 +10,17 @@ import Foundation
 import UIKit
 
 
-class Cards: Codable{
+class Cards: Codable, Equatable, Comparable{
+    static func < (lhs: Cards, rhs: Cards) -> Bool {
+        return lhs.elixirCost ?? 0 > rhs.elixirCost ?? 0
+    }
+    
+    
+    static func == (lhs: Cards, rhs: Cards) -> Bool {
+        return lhs.idName == rhs.idName
+        
+    }
+    
     var rarity : String?
     var idName : String?
     var name: String?

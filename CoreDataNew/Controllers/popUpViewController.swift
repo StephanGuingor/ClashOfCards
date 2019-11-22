@@ -62,9 +62,9 @@ class popUpViewController: UIViewController {
             }
         if segue.identifier == "hostSID"{
 
-            let vc = segue.destination as! UINavigationController
-            let game = vc.viewControllers.first as? GameViewController
-            game?.hostRoom()
+//            let vc = segue.destination as! UINavigationController
+//            let game = vc.viewControllers.first as? GameViewController
+//            game?.hostRoom()
         }
         }
     

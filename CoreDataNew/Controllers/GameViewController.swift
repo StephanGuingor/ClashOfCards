@@ -16,13 +16,17 @@ class GameViewController: UIViewController {
     //MARK: READY UP PHASE
     var playerIsReady:Bool = false
     
+    
+    var peerID: MCPeerID!
+    var mcSession: MCSession!
+    var mcAdvertiserAssistant: MCAdvertiserAssistant!
+    var messageToSend: String!
+    
+    
     @IBOutlet weak var readyUpButton: UIButton!
-  
+    
     var fontAttributes = [kCTStrokeWidthAttributeName as NSAttributedString.Key : NSNumber(integerLiteral: 6), kCTFontAttributeName as NSAttributedString.Key : UIFont(name: "Impact", size: 25.0)! ]
     
-    //MARK: MPC SINGLETON
-    var appDelegate : AppDelegate!
-    var session : MCSession!
     
     //MARK: Variable check joining state
     var join:Bool?
@@ -30,16 +34,11 @@ class GameViewController: UIViewController {
     
     
     //MARK: Game Settings
-    var playersConnected:[Int:MCPeerID]? //in order to map index value and peers
-   
-    enum PlayersTurn:Int{
-        case Player1 = 1
-        case Player2
-        case Player3
-        case Player4
-    }
+    //in order to map index value and peers
     
-    var currentTurn:PlayersTurn?
+    
+    
+    
     
     
     override func viewDidLoad() {
@@ -51,40 +50,73 @@ class GameViewController: UIViewController {
         
         
         //Is joining to session?
+        peerID = MCPeerID(displayName: UIDevice.current.name)
+        mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
+        mcSession.delegate = self
+        
+//        showConnections()
+        
         if join ?? false{
-            joinWithPlayers()
+            joinSession(sender: nil)
+        }else{
+            hostSession(sender: nil)
         }
         
         
-        //MARK: NOTIFICATION CENTER OBVSERVERS
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(peerChangedStateNotification), name: NSNotification.Name(rawValue: "MPC_DidChangeStateNotification"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(recievedDataNotification), name: NSNotification.Name(rawValue: "MPC_DidRecieveDataNotification"), object: nil)
-        // Do any additional setup after loading the view.
     }
     
     //MARK: Game SetUp
+    func showConnections(){
+        let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
+        
+        let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
+        
+        let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
+        
+        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(hostAction)
+        alert.addAction(joinAction)
+        alert.addAction(cancel)
+        present(alert, animated: true, completion: nil)
+    }
+    func hostSession(sender: UIAlertAction?){
+        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
+        mcAdvertiserAssistant.start()
+    }
     
+    func joinSession(sender: UIAlertAction?){
+        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
+        browser.delegate = self
+        present(browser, animated: true) {
+            print("browser presented")
+        }
+    }
+    
+   
     
     @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
-        let messageToSend = session.myPeerID.displayName
+        messageToSend = "\(peerID.displayName)"
         
-        guard let msgData = messageToSend.data(using: .utf8, allowLossyConversion: false)else{return}
-        
+        guard let msg = messageToSend.data(using: .utf8,
+                                           allowLossyConversion: true) else {return}
         do{
-            try self.session.send(msgData, toPeers: session.connectedPeers, with: .unreliable)
+            try self.mcSession.send(msg, toPeers: self.mcSession.connectedPeers, with: .unreliable)
+            
         }catch{
-            print("Peer ID could not be transfered \(error.localizedDescription)")
+            print(error.localizedDescription)
         }
     }
     
     
-    @objc func recievedDataNotification(){
+    @objc func recievedDataNotification(_ notification: Notification){
+        let data = notification.userInfo!["data"]
+        readyUpButton.setTitle(data as? String, for: .normal)
         print("Data recieved")
+        
     }
     @objc func peerChangedStateNotification(){
-        
+        print(mcSession.connectedPeers)
     }
     func everyOneReadyUp(){
         
@@ -99,7 +131,7 @@ class GameViewController: UIViewController {
     
     //MARK:DEBUG
     @IBAction func checkConnectedPeers(_ sender: Any) {
-        print(appDelegate.mpcHandler.mcSession.connectedPeers)
+        
     }
     
     //MARK:Set Up Button
@@ -107,7 +139,7 @@ class GameViewController: UIViewController {
         readyUpButton.backgroundColor = UIColor.red
         readyUpButton.layer.cornerRadius = 5
         readyUpButton.layer.applySketchShadow(color: UIColor.black, alpha: 1, x: 1, y: 2, blur: 2, spread: 1)
-       
+        
         readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
         
         
@@ -126,58 +158,16 @@ class GameViewController: UIViewController {
             
             
         case false:
-             readyUpButton.backgroundColor = UIColor.red
-      
-           readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
+            readyUpButton.backgroundColor = UIColor.red
+            
+            readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
         }
     }
     
     //MARK: MPC Handler
     
-    func setUpMPC(){
-        appDelegate = UIApplication.shared.delegate as? AppDelegate
-        
-        appDelegate.mpcHandler.delegate = self as? MCSessionDelegate
-        appDelegate.mpcHandler.setUpPeerDisplayName(displayName: UIDevice.current.name)
-        
-//        appDelegate.mpcHandler.advertiseSelf(advertise: true)
-    }
-  //MARK: Navigation
-    @IBAction func unwindToGame(_ sender: UIStoryboardSegue){
-        
-    }
-   
     
-     
-     func hostRoom(){
-        readyToPlaySetUp()
-        appDelegate.mpcHandler.advertiseSelf(advertise: true)
-    }
     
-    func joinWithPlayers(){
-        readyToPlaySetUp()
-//         appDelegate.mpcHandler.advertiseSelf(advertise: true)
-        guard  let browser = appDelegate.mpcHandler.browser else {
-            return
-        }
-        
-        present(browser, animated: true) {
-            print("finished view")
-        }
-    }
-    
-    func readyToPlaySetUp(){
-        setUpMPC()
-                appDelegate.mpcHandler.setUpSession()
-                
-        //        if appDelegate.mpcHandler.mcSession != nil{
-                   
-                appDelegate.mpcHandler.setUpBrowser()
-                appDelegate.mpcHandler.browser.delegate = self
-        
-        //Defining Session Variable
-                session = appDelegate.mpcHandler.mcSession
-    }
 }
 
 
@@ -185,7 +175,7 @@ extension GameViewController : MCBrowserViewControllerDelegate{
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         
         
-        appDelegate.mpcHandler.browser.dismiss(animated: true) {
+        dismiss(animated: true) {
             print("finished")
         }
         
@@ -193,7 +183,7 @@ extension GameViewController : MCBrowserViewControllerDelegate{
     
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         
-        appDelegate.mpcHandler.browser.dismiss(animated: true) {
+        dismiss(animated: true) {
             print("canceled from the handler")
         }
     }
@@ -201,4 +191,44 @@ extension GameViewController : MCBrowserViewControllerDelegate{
     
     
 }
-
+extension GameViewController:MCSessionDelegate{
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        
+        switch state {
+        case .connected:
+            break
+        case .connecting:
+            break
+        case .notConnected:
+            break
+        @unknown default:
+            print("error")
+        }
+    }
+    
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        DispatchQueue.main.async {
+            let recievedString = String(bytes: data, encoding: .utf8)
+            
+            self.readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: self.fontAttributes), for: .normal)
+            
+            print("recieved!")
+            
+        }
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        
+    }
+    
+    
+}

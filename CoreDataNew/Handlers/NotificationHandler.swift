@@ -21,18 +21,19 @@ class MPCHandler: NSObject{
         peerID = MCPeerID(displayName: displayName)
     }
     
-    func setUpSession(){
+    func setUpSession(displayName: String){
+        peerID = MCPeerID(displayName: displayName)
         mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
         mcSession.delegate = delegate
         
     }
     func setUpBrowser(){
-        browser = MCBrowserViewController(serviceType: "Game", session: mcSession)
+        browser = MCBrowserViewController(serviceType: "game", session: mcSession)
     }
     
     func advertiseSelf(advertise: Bool){
         if advertise{
-            mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "Game", discoveryInfo: nil, session: mcSession)
+            mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "game", discoveryInfo: nil, session: mcSession)
             mcAdvertiserAssistant!.start()
         }else{
             mcAdvertiserAssistant!.stop()

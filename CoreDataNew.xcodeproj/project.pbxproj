@@ -20,7 +20,6 @@
 		D4560D91237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4560D8F237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift */; };
 		D4560D92237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */; };
 		D4560D94237B1F3E004B92F2 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4560D93237B1F3E004B92F2 /* TableViewCell.swift */; };
-		D48419A62385B8BA00FC2298 /* FinalBGStars.svg in Resources */ = {isa = PBXBuildFile; fileRef = D48419A52385B8B900FC2298 /* FinalBGStars.svg */; };
 		D48419AA2385BE1800FC2298 /* Impacted.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419A82385BE1800FC2298 /* Impacted.ttf */; };
 		D48419AB2385BE1800FC2298 /* impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419A92385BE1800FC2298 /* impact.ttf */; };
 		D48419AD2385BE2100FC2298 /* unicode.impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419AC2385BE2100FC2298 /* unicode.impact.ttf */; };
@@ -52,7 +51,6 @@
 		D4560D8F237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		D4560D93237B1F3E004B92F2 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
-		D48419A52385B8B900FC2298 /* FinalBGStars.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FinalBGStars.svg; sourceTree = "<group>"; };
 		D48419A82385BE1800FC2298 /* Impacted.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Impacted.ttf; sourceTree = "<group>"; };
 		D48419A92385BE1800FC2298 /* impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = impact.ttf; sourceTree = "<group>"; };
 		D48419AC2385BE2100FC2298 /* unicode.impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = unicode.impact.ttf; sourceTree = "<group>"; };
@@ -106,7 +104,6 @@
 				D48B915F2384971500769C51 /* Views */,
 				D45461792379B9F900466D70 /* AppDelegate.swift */,
 				D454617F2379B9F900466D70 /* Main.storyboard */,
-				D48419A52385B8B900FC2298 /* FinalBGStars.svg */,
 				D45461852379B9FC00466D70 /* Assets.xcassets */,
 				D45461872379B9FC00466D70 /* LaunchScreen.storyboard */,
 				D454618A2379B9FC00466D70 /* Info.plist */,
@@ -263,7 +260,6 @@
 				D45461892379B9FC00466D70 /* LaunchScreen.storyboard in Resources */,
 				D48419AB2385BE1800FC2298 /* impact.ttf in Resources */,
 				D45461862379B9FC00466D70 /* Assets.xcassets in Resources */,
-				D48419A62385B8BA00FC2298 /* FinalBGStars.svg in Resources */,
 				D45461812379B9F900466D70 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

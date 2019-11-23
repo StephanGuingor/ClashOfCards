@@ -37,9 +37,12 @@ class GameViewController: UIViewController {
     
     //MARK: Game Settings
     //in order to map index value and peers
-    
-    var playersConnected:[Int:MCPeerID]?
-    
+    ///Keep track of all connected players
+    var playersConnected :Set<MCPeerID> = []
+    ///Will change to true when everyone is ready
+    var playersReady:Bool = false
+    ///Contains information to manage the turns
+    var playerIndexAndPeerID:[Int:MCPeerID]?
     ///This struct is in charge of sending all the data across devices
     var dataToSendAsJSON: dataToJSON?
     
@@ -69,6 +72,10 @@ class GameViewController: UIViewController {
             joinSession2()
         }else{
             hostSession2()
+            
+            ///Adding hosting device to the connected players set
+            playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
+            print("Welcome \(appDelegate!.mpcHandler.mcSession.myPeerID) to your session!")
         }
         
         
@@ -80,7 +87,7 @@ class GameViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(peerChangedStateNotification), name: NSNotification.Name(rawValue: "MPC_DidChangeStateNotification"), object: nil)
     }
 //MARK: JSON FUNCTIONS
-    
+    ///Function designed to convert objects into data , so it can be sent
     func encodeToJSON(name: String, index: Int, ready: Bool, cardID: String, targetPeer: Int) -> Data{
         let encoder = JSONEncoder()
         let messageToSend = dataToJSON(name: name, index: index, ready: ready, cardID: cardID, targetPeer: targetPeer)
@@ -99,6 +106,7 @@ class GameViewController: UIViewController {
         return Data()
     }
     
+    ///Function designed to recieve information from other peers, by decoding data into objects
     func decodeToJSON(_ data: Data){
         
         do{
@@ -133,6 +141,8 @@ class GameViewController: UIViewController {
     }
     
     func sendStateIsReadyOrUnReady(_ message: String){
+        
+//        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: <#T##Int#>, ready: <#T##Bool#>, cardID: <#T##String?#>, targetPeer: <#T##Int?#>)
         messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
             
             guard let msg = messageToSend.data(using: .utf8,
@@ -148,6 +158,7 @@ class GameViewController: UIViewController {
 
     ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host
     @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
+       
           messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
           
           guard let msg = messageToSend.data(using: .utf8,
@@ -242,10 +253,42 @@ class GameViewController: UIViewController {
     
     
     ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
-    @objc func peerChangedStateNotification(){
+    @objc func peerChangedStateNotification(_ notifaction: Notification){
         print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+        
+        let state = notifaction.userInfo!["state"] as! Int
+        let peerID = notifaction.userInfo!["peerID"] as! MCPeerID
+        switch  MCSessionState.init(rawValue: state){
+        case .connected:
+            ///It will only add the player if device is not already registered
+            if checkIfAvailableSpace(peerID){
+                playersConnected.insert(peerID)
+                print("The player \(peerID.displayName) join the session!")
+            }
+        case .connecting:
+            print("player is connecting")
+        default:
+            break
+        }
     }
-
+///This function return will tell if we should keep adding players to the connected players set or if we have reached a maximum capacity.
+    func checkIfAvailableSpace(_ peer: MCPeerID) -> Bool{
+        if playersConnected.count < 4{
+            return true
+        }else{
+            //Checking if the extra peer connected, so he can be kicked
+            if appDelegate?.mpcHandler.mcSession.myPeerID == peer{
+                appDelegate?.mpcHandler.mcSession.disconnect()
+                print("Sorry, there was not enough space for \(peer.displayName). Max space is 4 players.")
+            }
+            //Stops advertising th host, we do a nil check in order to see who is the host. Non-Host will be nil
+            if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
+               appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
+                print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising your game")
+            }
+        return false
+        }
+    }
     
 }
 

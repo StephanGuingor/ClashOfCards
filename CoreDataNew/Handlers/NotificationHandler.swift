@@ -14,7 +14,7 @@ import MultipeerConnectivity
 class MPCHandler: NSObject{
     var peerID: MCPeerID!
     var mcSession: MCSession!
-    var mcAdvertiserAssistant: MCAdvertiserAssistant!
+    var mcAdvertiserAssistant: MCAdvertiserAssistant?
     
     
     
@@ -29,7 +29,7 @@ class MPCHandler: NSObject{
    
     func hostSession(){
         mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "game", discoveryInfo: nil, session: mcSession)
-        mcAdvertiserAssistant.start()
+        mcAdvertiserAssistant!.start()
     }
     
     func joinSession(delegate: MCBrowserViewControllerDelegate, from: UIViewController){

@@ -57,6 +57,8 @@ class GameViewController: UIViewController {
 //MARK: GS Game Start
     ///Contains information to manage the turns
       var playerIndexAndPeerID:[Int:MCPeerID] = [:]
+    ///this variable will be used to send information about the players and then assign playerIndexAndPeerID
+      var playerIndexAndNames:[Int:String] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,18 +112,19 @@ class GameViewController: UIViewController {
     }
     
     ///Function designed to recieve information from other peers, by decoding data into objects
-    func decodeToJSON(_ data: Data) -> dataToJSON{
+    func decodeToJSON(_ data: Data) -> dtJson{
         
         do{
             
-            let peerMessageRecieved = try JSONDecoder().decode(dataToJSON.self, from: data)
-            print(peerMessageRecieved.name)
+            let peerMessageRecieved = try JSONDecoder().decode(dtJson.self, from: data)
+          // let strData =  String(bytes: data, encoding: .utf8)
+            print(peerMessageRecieved)
             return peerMessageRecieved
         }catch{
             print("JSON Decode Failed \(error.localizedDescription)")
         }
         //default
-        return dataToJSON(name: "", index: -1, ready: false, cardID: "", targetPeer: -1)
+        return dtJson(name: "", index: -1, ready: false, cardID: "", targetPeer: -1,sendingIndexes: false, indexesAndNames: [-1:""])
     }
     //MARK:Set Up Circle View
     func setUpCircleView(_ initialColor:Color,_ secondaryColor:Color){
@@ -160,8 +163,13 @@ class GameViewController: UIViewController {
             //sending information about ready status
             sendStateIsReadyOrUnReady(true)
             
+            //Will check if ready when sending data
             if checkIfEveryoneIsReady(){
-                changeCircleViewAndLabel()
+                updateViewToStartGame()
+                
+                //it will also send the idx and names
+                stopAdvertisingIfAdvertising()
+               
                 
                    }
             
@@ -178,7 +186,7 @@ class GameViewController: UIViewController {
     ///Sends an object from dataToJSON that everyone will recieve, the important piece is if the player is ready
     func sendStateIsReadyOrUnReady(_ ready: Bool){
         
-        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: ready, cardID: nil, targetPeer: nil)
+        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: ready, cardID: nil, targetPeer: nil,sendingIndexes: nil, idxAndNames: nil)
         
         let msgData = encodeToJSON(message)
         
@@ -213,10 +221,27 @@ class GameViewController: UIViewController {
         return false
     }
     
-    ///Function that will change label to playing, and circle to green only when everyone is ready
-    func changeCircleViewAndLabel(){
+    ///Function that will change label to playing, and circle to green only when everyone is ready. And remove ready up button
+    func updateViewToStartGame(){
         gameIsLiveLabel.text = "Playing..."
         setUpCircleView(Color.green, Color.green)
+        removeButton()
+    }
+    
+    ///When game is live, the ready up button will disappear.
+    func removeButton(){
+        UIView.animate(withDuration: 0.25, animations: {
+            self.readyUpButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+            self.readyUpButton.backgroundColor = UIColor.systemPink
+                   self.readyUpButton.alpha = 0.0
+               }, completion: {(finished : Bool) in
+                   if(finished)
+                   {
+                       
+                    self.readyUpButton.removeFromSuperview()
+                       
+                   }
+               })
     }
 //MARK: GS Game Start
     func everyOneReadyUp(){
@@ -266,9 +291,8 @@ class GameViewController: UIViewController {
         //MARK:GS Getting Ready - Data
         ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep running
         
-    //debug
-        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
         
+        //This will be runned before the game has started
         if !playersReady{
             //sets the peer and state in a dictionary
             playersAndReadyStatus[peer!] = decodedData.ready
@@ -278,13 +302,32 @@ class GameViewController: UIViewController {
             if checkIfEveryoneIsReady(){
                 playersReady = true
                 
-                //Will set circle view to green and label to playing
-               changeCircleViewAndLabel()
+                //Will set circle view to green and label to playing, if recieving data
+               updateViewToStartGame()
+               stopAdvertisingIfAdvertising()
                 
+            }
+            //DEBUG
+            //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
+            
+            //Debug - no handler
+            //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
+        }
+        if decodedData.sendingIndexes{
+            for peerID in playersAndReadyStatus.keys{
+            for idxName in decodedData.indexesAndNames{
+                    if peerID.displayName == idxName.value{
+                        playerIndexAndPeerID[idxName.key] = peerID
+                        break
+                    }
+                }
+            }
+            for i in playerIndexAndPeerID{
+                print("Key: \(i.key),Value:\(i.value)")
             }
         }
         
-//        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
+       
         print("Data recieved")
         
     }
@@ -318,12 +361,49 @@ class GameViewController: UIViewController {
                 appDelegate?.mpcHandler.mcSession.disconnect()
                 print("Sorry, there was not enough space for \(peer.displayName). Max space is 4 players.")
             }
-            //Stops advertising th host, we do a nil check in order to see who is the host. Non-Host will be nil
-            if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
-                appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
-                print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising your game")
-            }
+            
             return false
+        }
+    }
+    
+    func stopAdvertisingIfAdvertising(){
+        if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
+            //assings only to host, indexes and players, in order to send them to other devices
+                    assignIndexToPlayers()
+                    sendIdxAndNames()
+                       appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
+                       print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising your game")
+                   }
+    }
+    
+    
+    ///Function that will assign indexes to players , and ready message with names
+    func assignIndexToPlayers(){
+        
+        playerIndexAndPeerID[0] = appDelegate?.mpcHandler.mcSession.myPeerID
+        playerIndexAndNames[0] = playerIndexAndPeerID[0]?.displayName
+        
+        var idx = 1
+        for i in playersConnected where i != appDelegate?.mpcHandler.mcSession.myPeerID{
+            playerIndexAndPeerID[idx] = i
+            playerIndexAndNames[idx] = i.displayName
+            idx += 1
+        }
+    }
+    
+    func sendIdxAndNames(){
+        
+        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardID: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames)
+        
+        let msgData = encodeToJSON(message)
+        
+        
+        do{
+            ///Encoded object will be sent to every player
+            try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+            
+        }catch{
+            print("Error in sendState \n \(error.localizedDescription)")
         }
     }
     

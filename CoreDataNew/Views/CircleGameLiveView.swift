@@ -9,6 +9,8 @@
 import Foundation
 import Macaw
 
+
+///Custom view. that displays a circle, if you eant to use it in landscape you'll have to re assign the node. 
 class CircleView: MacawView {
     //default
   var shape = Shape(form: Circle(cx: 20 , cy: 20, r: 10),

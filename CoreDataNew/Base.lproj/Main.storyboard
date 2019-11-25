@@ -215,14 +215,31 @@
                                     </attributedString>
                                 </state>
                                 <connections>
-                                    <action selector="sendMCPeerIDToPlayersInSession:" destination="w7q-ch-gyt" eventType="touchUpInside" id="Pyw-P4-13s"/>
                                     <action selector="toggleReady:" destination="w7q-ch-gyt" eventType="touchUpInside" id="Cq6-Pm-Loq"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XfJ-ff-Zmt" userLabel="Game Live">
+                                <rect key="frame" x="5" y="5" width="134" height="40.5"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NdR-sf-U4n" customClass="CircleView" customModule="CoreDataNew" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="40.5" height="40.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="NdR-sf-U4n" secondAttribute="height" multiplier="1:1" id="ADW-gj-MKc"/>
+                                        </constraints>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="34W-VC-Xba">
+                                        <rect key="frame" x="40.5" y="0.0" width="93.5" height="40.5"/>
+                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="oRX-fE-6wn" firstAttribute="centerX" secondItem="pZP-GG-Tne" secondAttribute="centerX" id="1eS-QI-fIN"/>
+                            <constraint firstItem="XfJ-ff-Zmt" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.323671" id="1in-kY-vGV"/>
                             <constraint firstItem="e5e-r8-Pu1" firstAttribute="height" secondItem="oRX-fE-6wn" secondAttribute="height" multiplier="0.319202" id="3Yy-GG-i1n"/>
                             <constraint firstItem="oRX-fE-6wn" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.49022" id="4N6-KL-svc"/>
                             <constraint firstItem="DRz-mq-1Nf" firstAttribute="centerX" secondItem="pZP-GG-Tne" secondAttribute="centerX" id="4ZU-dO-iPT"/>
@@ -232,6 +249,7 @@
                             <constraint firstItem="DRz-mq-1Nf" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="1.8" id="7fg-j5-UZF"/>
                             <constraint firstItem="ThC-xR-Hm2" firstAttribute="centerX" secondItem="e5e-r8-Pu1" secondAttribute="centerX" id="7qo-oZ-8VJ"/>
                             <constraint firstItem="ThC-xR-Hm2" firstAttribute="height" secondItem="e5e-r8-Pu1" secondAttribute="height" multiplier="0.6875" id="8hD-Fp-RaQ"/>
+                            <constraint firstItem="XfJ-ff-Zmt" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.05" id="9cC-gS-CZn"/>
                             <constraint firstItem="oRX-fE-6wn" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="1.05" id="9pU-Oi-slA"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="centerX" secondItem="oRX-fE-6wn" secondAttribute="centerX" multiplier="1.7" id="CuL-Gh-REG"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="centerY" secondItem="oRX-fE-6wn" secondAttribute="centerY" multiplier="0.9" id="D1D-ev-RX3"/>
@@ -244,6 +262,7 @@
                             <constraint firstItem="7Fl-Fr-faI" firstAttribute="leading" secondItem="pZP-GG-Tne" secondAttribute="leading" id="Zqc-kj-GIr"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="width" secondItem="oRX-fE-6wn" secondAttribute="width" multiplier="0.21123" id="bAj-5G-b8t"/>
                             <constraint firstItem="GaL-MT-ptE" firstAttribute="centerX" secondItem="pZP-GG-Tne" secondAttribute="centerX" id="bFK-3J-ES1"/>
+                            <constraint firstItem="XfJ-ff-Zmt" firstAttribute="top" secondItem="pZP-GG-Tne" secondAttribute="top" constant="5" id="dXT-MV-1Tm"/>
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="centerX" secondItem="oRX-fE-6wn" secondAttribute="centerX" multiplier="0.3" id="fYb-SX-K9E"/>
                             <constraint firstItem="e5e-r8-Pu1" firstAttribute="centerY" secondItem="oRX-fE-6wn" secondAttribute="centerY" multiplier="0.9" id="gMD-pU-0WW"/>
                             <constraint firstItem="GaL-MT-ptE" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="0.5" priority="999" id="gnS-db-Qp7"/>
@@ -256,6 +275,7 @@
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="height" secondItem="oRX-fE-6wn" secondAttribute="height" multiplier="0.254364" id="lfK-Va-7Pl"/>
                             <constraint firstItem="7Fl-Fr-faI" firstAttribute="top" secondItem="pZP-GG-Tne" secondAttribute="top" id="oRd-hh-1gk"/>
                             <constraint firstItem="GaL-MT-ptE" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.0330073" id="pSm-1g-hwF"/>
+                            <constraint firstItem="XfJ-ff-Zmt" firstAttribute="leading" secondItem="pZP-GG-Tne" secondAttribute="leading" constant="5" id="rrJ-UY-k52"/>
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="width" secondItem="oRX-fE-6wn" secondAttribute="width" multiplier="0.21123" id="siU-4J-ION"/>
                             <constraint firstItem="qzv-uH-Z1G" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.0371287" id="zXs-dN-FTX"/>
                             <constraint firstItem="qzv-uH-Z1G" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="0.3" id="zlc-Nh-XU6"/>
@@ -264,6 +284,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="yiU-nW-rTH"/>
                     <connections>
+                        <outlet property="gameIsLiveLabel" destination="34W-VC-Xba" id="Q24-fV-kjU"/>
+                        <outlet property="gameIsLiveView" destination="NdR-sf-U4n" id="gTK-aI-d10"/>
                         <outlet property="readyUpButton" destination="DRz-mq-1Nf" id="gFH-uG-rEg"/>
                     </connections>
                 </viewController>

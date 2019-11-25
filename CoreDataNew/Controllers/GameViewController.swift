@@ -8,24 +8,28 @@
 
 import UIKit
 import MultipeerConnectivity
-
+import Macaw
 
 
 
 class GameViewController: UIViewController {
-    //MARK: READY UP PHASE
-    
-    ///Manages the state of the game, if its set to true it means that the game is currently or about to be executed
-    var playerIsReady:Bool = false
+//MARK: READY UP PHASE
     
     //Variables para debug sin Handler
     //    var peerID: MCPeerID!
     //    var mcSession: MCSession!
     //    var mcAdvertiserAssistant: MCAdvertiserAssistant!
     
+    ///Manages the state of the game, if its set to true it means that the game is currently or about to be executed
+    var playerIsReady:Bool = false
     
     var messageToSend: String!
     
+    
+    @IBOutlet weak var gameIsLiveView: MacawView!
+    var viewReadyState = Color.rgb(r: 0, g: 255, b: 0)
+    
+    @IBOutlet weak var gameIsLiveLabel: UILabel!
     
     @IBOutlet weak var readyUpButton: UIButton!
     
@@ -39,17 +43,20 @@ class GameViewController: UIViewController {
     
     //MARK: Game Settings
     //in order to map index value and peers
+    
+//MARK: GS Getting Ready - Variables
     ///Keep track of all connected players
     var playersConnected :Set<MCPeerID> = []
     ///Will change to true when everyone is ready
     var playersReady:Bool = false
-    ///Contains information to manage the turns
-    var playerIndexAndPeerID:[Int:MCPeerID] = [:]
     ///Dictionary of the players connected and their ready state
     var playersAndReadyStatus:[MCPeerID:Bool] = [:]
     ///This struct is in charge of sending all the data across devices
     var dataToSendAsJSON: dataToJSON?
     
+//MARK: GS Game Start
+    ///Contains information to manage the turns
+      var playerIndexAndPeerID:[Int:MCPeerID] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +66,9 @@ class GameViewController: UIViewController {
         
         //ReadyUpButtonSetUp
         
+        setUpCircleView(Color.red,Color.red)
+       
+
         settingTheButton()
         
         //Initial set up
@@ -79,7 +89,7 @@ class GameViewController: UIViewController {
     }
     
     
-    //MARK: JSON FUNCTIONS
+//MARK: JSON FUNCTIONS
     ///Function designed to convert objects into data , so it can be sent
     func encodeToJSON(_ object: dataToJSON) -> Data{
         let encoder = JSONEncoder()
@@ -111,13 +121,31 @@ class GameViewController: UIViewController {
             print("JSON Decode Failed \(error.localizedDescription)")
         }
         //default
-        return dataToJSON(name: "", index: -1, ready: false, cardID: nil, targetPeer: nil)
+        return dataToJSON(name: "", index: -1, ready: false, cardID: "", targetPeer: -1)
     }
-    
+    //MARK:Set Up Circle View
+    func setUpCircleView(_ initialColor:Color,_ secondaryColor:Color){
+        gameIsLiveView.node = Shape(form: Circle(cx: Double(gameIsLiveView.bounds.height) * 0.5, cy: Double(gameIsLiveView.bounds.height) * 0.5, r: Double(gameIsLiveView.bounds.height) * 0.25),
+                                    fill: LinearGradient(degree: 90, from: initialColor, to: secondaryColor),
+        stroke: Stroke(fill: Color.white, width: 2))
+        
+    }
+    //MARK:Set Up Button
+    func settingTheButton(){
+        readyUpButton.backgroundColor = UIColor.red
+        readyUpButton.layer.cornerRadius = 5
+        readyUpButton.layer.applySketchShadow(color: UIColor.black, alpha: 1, x: 1, y: 2, blur: 2, spread: 1)
+        
+        readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
+        
+        
+        readyUpButton.tintColor = UIColor.white
+        
+    }
     
     //MARK: Game SetUp
     
-    //MARK:GS: Getting Ready
+//MARK:GS: Getting Ready
     @IBAction func toggleReady(_ sender: Any) {
         
         playerIsReady.toggle()
@@ -131,6 +159,11 @@ class GameViewController: UIViewController {
             playersAndReadyStatus[appDelegate!.mpcHandler.mcSession.myPeerID] = true
             //sending information about ready status
             sendStateIsReadyOrUnReady(true)
+            
+            if checkIfEveryoneIsReady(){
+                changeCircleViewAndLabel()
+                
+                   }
             
         case false:
             readyUpButton.backgroundColor = UIColor.red
@@ -155,8 +188,10 @@ class GameViewController: UIViewController {
             try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
             
         }catch{
-            print(error.localizedDescription)
+            print("Error in sendState \n \(error.localizedDescription)")
         }
+        
+       
     }
     
     ///Function will check for everyone state, reeady and unready, if it matches the players connected count, game starts.
@@ -169,97 +204,42 @@ class GameViewController: UIViewController {
             }
         }
         
-        //if every connected player is ready it will return true
+        //if every connected player is ready it will return true, at least two players
         if playersConnected.count >= 2{
+//            print(readyCount) -debug
+//            print(playersConnected.count) - debug
             return playersConnected.count == readyCount
         }
         return false
     }
     
-    ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host
-    @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
-        
-        messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
-        
-        guard let msg = messageToSend.data(using: .utf8,
-                                           allowLossyConversion: true) else {return}
-        do{
-            try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
-            
-        }catch{
-            print(error.localizedDescription)
-        }
+    ///Function that will change label to playing, and circle to green only when everyone is ready
+    func changeCircleViewAndLabel(){
+        gameIsLiveLabel.text = "Playing..."
+        setUpCircleView(Color.green, Color.green)
     }
-    
+//MARK: GS Game Start
     func everyOneReadyUp(){
         
     }
     
+
     
-    
-    //MARK:DEBUG
-    ///Function for debug only, to coroborate players in session
-    @IBAction func checkConnectedPeers(_ sender: Any) {
-        print(appDelegate!.mpcHandler.mcSession.connectedPeers)
-    }
-    
-    ///Displays an alert controller, for user to choose between joining or hosting, this should only be used for debug purposes
-    func showConnections(){
-        let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
-        
-        let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
-        
-        let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
-        
-        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-        
-        alert.addAction(hostAction)
-        alert.addAction(joinAction)
-        alert.addAction(cancel)
-        present(alert, animated: true, completion: nil)
-    }
-    
-    ///Funcion de hosting para alert view, solo para debug
-    func hostSession(sender: UIAlertAction?){
-        //        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
-        //        mcAdvertiserAssistant.start()
-    }
-    
-    ///Funcion de join para alert view, solo para debug
-    func joinSession(sender: UIAlertAction?){
-        //        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
-        //        browser.delegate = self
-        //        present(browser, animated: true) {
-        //            print("browser presented")
-        //        }
-    }
-    
-    //MARK:Set Up Button
-    func settingTheButton(){
-        readyUpButton.backgroundColor = UIColor.red
-        readyUpButton.layer.cornerRadius = 5
-        readyUpButton.layer.applySketchShadow(color: UIColor.black, alpha: 1, x: 1, y: 2, blur: 2, spread: 1)
-        
-        readyUpButton.setAttributedTitle(NSAttributedString(string: "Un-Ready", attributes: fontAttributes), for: .normal)
-        
-        
-        readyUpButton.tintColor = UIColor.white
-        
-    }
-    
-    
-    
-    //MARK: MPC Handler
+//MARK: MPC Handler
     
     //Check si el usuario hizo click en el button de join o de host
     func joinOrHost(){
+        ///Adding hosting device to the connected players set
+        //we have to add both players to connected players, because they wont recieve notifications about theirselves
+        playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
         
         if join ?? false{
             joinSession2()
+            
         }else{
             hostSession2()
-            ///Adding hosting device to the connected players set
-            playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
+            
+            
             print("Welcome \(appDelegate!.mpcHandler.mcSession.myPeerID) to your session!")
         }
     }
@@ -279,12 +259,16 @@ class GameViewController: UIViewController {
         let peer = notification.userInfo!["peerID"] as? MCPeerID
         
         //this variable is for debug purposes, this will name of device.
-        let recievedString = String(bytes: data!, encoding: .utf8)
+//        let recievedString = String(bytes: data!, encoding: .utf8) -debug
         
         let decodedData = decodeToJSON(data!)
         
-        
+        //MARK:GS Getting Ready - Data
         ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep running
+        
+    //debug
+        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
+        
         if !playersReady{
             //sets the peer and state in a dictionary
             playersAndReadyStatus[peer!] = decodedData.ready
@@ -293,14 +277,17 @@ class GameViewController: UIViewController {
             //if everyone is ready, game will start
             if checkIfEveryoneIsReady(){
                 playersReady = true
+                
+                //Will set circle view to green and label to playing
+               changeCircleViewAndLabel()
+                
             }
         }
         
-        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal)
+//        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
         print("Data recieved")
         
     }
-    
     
     ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
     @objc func peerChangedStateNotification(_ notifaction: Notification){
@@ -339,6 +326,61 @@ class GameViewController: UIViewController {
             return false
         }
     }
+    
+//MARK:DEBUG
+      
+      ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host,  usar con el toggle del boton.
+         @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
+             
+             messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
+             
+             guard let msg = messageToSend.data(using: .utf8,
+                                                allowLossyConversion: true) else {return}
+             do{
+                 try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+                 
+             }catch{
+                 print(error.localizedDescription)
+             }
+         }
+      
+      
+      ///Function for debug only, to coroborate players in session
+      @IBAction func checkConnectedPeers(_ sender: Any) {
+          print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+      }
+      
+      ///Displays an alert controller, for user to choose between joining or hosting, this should only be used for debug purposes
+      func showConnections(){
+          let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
+          
+          let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
+          
+          let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
+          
+          let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+          
+          alert.addAction(hostAction)
+          alert.addAction(joinAction)
+          alert.addAction(cancel)
+          present(alert, animated: true, completion: nil)
+      }
+      
+      ///Funcion de hosting para alert view, solo para debug
+      func hostSession(sender: UIAlertAction?){
+          //        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
+          //        mcAdvertiserAssistant.start()
+      }
+      
+      ///Funcion de join para alert view, solo para debug
+      func joinSession(sender: UIAlertAction?){
+          //        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
+          //        browser.delegate = self
+          //        present(browser, animated: true) {
+          //            print("browser presented")
+          //        }
+      }
+      
     
 }
 

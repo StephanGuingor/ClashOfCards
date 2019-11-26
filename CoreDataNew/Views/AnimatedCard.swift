@@ -24,7 +24,7 @@ class AnimatedCard: UIImageView {
         self.layer.isHidden = false
         self.layer.position = viewC.view.center
         self.layer.transform = CATransform3DRotate(self.layer.transform, CGFloat.pi, 0, 0, -0.5)
-        self.layer.zPosition = self.bounds.width
+        self.layer.zPosition = 1
         
         
     }
@@ -39,29 +39,33 @@ class AnimatedCard: UIImageView {
         }else if tmp >= 3{
             tmp *= -1
             tmp += 2
+            
         }
+        
+        let animationDuration = 1 / (Double(tmp) + 0.5)
+        
         self.layer.isHidden = false
         //GROUP ANIMATION SETUP
         CATransaction.begin()
-        CATransaction.setAnimationDuration(2.0)
+        CATransaction.setAnimationDuration(1.5)
 //
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut))
         
         //POSITION ANIMATION
         let positionAnimation = CABasicAnimation(keyPath: "position")
-        positionAnimation.duration = 1
+        positionAnimation.duration = animationDuration
         positionAnimation.fromValue = NSValue(cgPoint: CGPoint(x: self.center.x - 30, y: self.center.y - 15)) // we have to wrap c types in NSVAlUE in order to animate
         positionAnimation.toValue = NSValue(cgPoint: CGPoint(x: (viewC.view.center.x) - CGFloat(tmp * 50), y: (viewC.view.bounds.maxY)))
         
         //SETTING ROTATION FUNCTION
         let transformAnimation = CABasicAnimation(keyPath: "transform")
-        transformAnimation.duration = 1
+        transformAnimation.duration = animationDuration
         transformAnimation.fromValue = NSValue(caTransform3D: self.layer.transform)
         transformAnimation.toValue = NSValue(caTransform3D: CATransform3DRotate(self.layer.transform, CGFloat.pi, 0.0, 0.0, 0.5))
         
         //SETTING SCALE FUNCTION
         let scaleAnimation = CABasicAnimation(keyPath: "bounds")
-        scaleAnimation.duration = 1
+        scaleAnimation.duration = animationDuration
         scaleAnimation.fromValue = NSValue(cgRect: self.layer.bounds )
         scaleAnimation.toValue = NSValue(cgRect: CGRect(x: self.center.x, y: self.center.y, width: self.layer.bounds.height * 10, height: self.layer.bounds.width * 10))
         
@@ -79,7 +83,6 @@ class AnimatedCard: UIImageView {
         self.layer.add(transformAnimation, forKey: "transform")
         self.layer.add(scaleAnimation,forKey: "bounds")
         
-       
         //FINAL TOUCHES OF CATRANSACTION
         CATransaction.commit()
         

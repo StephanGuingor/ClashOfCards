@@ -253,7 +253,7 @@ class GameViewController: UIViewController {
             if(finished)
             {
                 if self.readyUpButton != nil{
-                     self.readyUpButton.removeFromSuperview()
+                    self.readyUpButton.removeFromSuperview()
                 }
                 
                 
@@ -304,6 +304,7 @@ class GameViewController: UIViewController {
         }
     }
     
+    ///Creates all the animated cards for the player and serves them to the player
     func mapToAnimatedCardsAndServe(){
         let cardsToServe = listOfPlayers[playerIndex!].playerStack.listStack
         
@@ -318,242 +319,252 @@ class GameViewController: UIViewController {
         }
         
         var idx = 0
+        let order = [-2,-3,-4,-1,0]
         for card in animatedCards{
-            card.layer.zPosition = CGFloat(-idx)
-            card.startingPosition(viewC: self)
-            card.serve(indexCard: &idx, viewC: self)
-            idx += 1
-        }
-    }
-    
-    
-    //MARK: MPC Handler
-    
-    //Check si el usuario hizo click en el button de join o de host
-    func joinOrHost(){
-        ///Adding hosting device to the connected players set
-        //we have to add both players to connected players, because they wont recieve notifications about theirselves
-        playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
-        
-        if join ?? false{
-            joinSession2()
-            
-        }else{
-            hostSession2()
-            
-            
-            print("Welcome \(appDelegate!.mpcHandler.mcSession.myPeerID) to your session!")
-        }
-    }
-    ///Brings up MCBrowser Controller in order to join to an existing session
-    func joinSession2(){
-        appDelegate?.mpcHandler.joinSession(delegate: self, from: self)
-    }
-    
-    /// Via de MCAdvertiserAssistant, it advertises current session  to other devices
-    func hostSession2(){
-        appDelegate?.mpcHandler.hostSession()
-    }
-    
-    ///Function runned by observer in charge of data notifications
-    @objc func recievedDataNotification(_ notification: Notification){
-        let data = notification.userInfo!["data"] as? Data
-        let peer = notification.userInfo!["peerID"] as? MCPeerID
-        
-        //this variable is for debug purposes, this will name of device.
-        //        let recievedString = String(bytes: data!, encoding: .utf8) -debug
-        
-        let decodedData = decodeToJSON(data!)
-        
-        //MARK:GS Getting Ready - Data
-        ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep running
-        
-        
-        //This will be runned before the game has started
-        if !playersReady{
-            //sets the peer and state in a dictionary
-            playersAndReadyStatus[peer!] = decodedData.ready
-            
-            
-            //if everyone is ready, game will start
-            if checkIfEveryoneIsReady(){
-                playersReady = true
+            DispatchQueue.main.async {
+                card.startingPosition(viewC: self)
+                card.layer.zPosition = CGFloat(order[idx])
+                card.serve(indexCard: &idx, viewC: self)
+                idx += 1
                 
-                //Will set circle view to green and label to playing, if recieving data
-                updateViewToStartGame()
-                stopAdvertisingIfAdvertising()
-                
-                //debug
-                if playerIndex == 0{
-                    
-                }
-                
+            
             }
-            //DEBUG
-            //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
+    }
+}
+    
+
+
+//MARK: MPC Handler
+
+//Check si el usuario hizo click en el button de join o de host
+func joinOrHost(){
+    ///Adding hosting device to the connected players set
+    //we have to add both players to connected players, because they wont recieve notifications about theirselves
+    playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
+    
+    if join ?? false{
+        joinSession2()
+        
+    }else{
+        hostSession2()
+        
+        
+        print("Welcome \(appDelegate!.mpcHandler.mcSession.myPeerID) to your session!")
+    }
+}
+///Brings up MCBrowser Controller in order to join to an existing session
+func joinSession2(){
+    appDelegate?.mpcHandler.joinSession(delegate: self, from: self)
+}
+
+/// Via de MCAdvertiserAssistant, it advertises current session  to other devices
+func hostSession2(){
+    appDelegate?.mpcHandler.hostSession()
+}
+
+///Function runned by observer in charge of data notifications
+@objc func recievedDataNotification(_ notification: Notification){
+    let data = notification.userInfo!["data"] as? Data
+    let peer = notification.userInfo!["peerID"] as? MCPeerID
+    
+    //this variable is for debug purposes, this will name of device.
+    //        let recievedString = String(bytes: data!, encoding: .utf8) -debug
+    
+    let decodedData = decodeToJSON(data!)
+    
+    //MARK:GS Getting Ready - Data
+    ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep running
+    
+    
+    //This will be runned before the game has started
+    if !playersReady{
+        //sets the peer and state in a dictionary
+        playersAndReadyStatus[peer!] = decodedData.ready
+        
+        
+        //if everyone is ready, game will start
+        if checkIfEveryoneIsReady(){
+            playersReady = true
             
-            //Debug - no handler
-            //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
-        }
-        if decodedData.sendingIndexes{
-            for peerID in playersAndReadyStatus.keys{
-                for idxName in decodedData.indexesAndNames{
-                    if peerID.displayName == idxName.value{
-                        playerIndexAndPeerID[idxName.key] = peerID
-                        break
-                    }
-                }
-            }
-            ///sets the index of the player
-            retrieveIndexValue()
+            //Will set circle view to green and label to playing, if recieving data
+            updateViewToStartGame()
+            stopAdvertisingIfAdvertising()
             
             //debug
-            for i in playerIndexAndPeerID{
-                print("Key: \(i.key),Value:\(i.value)")
-            }
-        }
-        
-        
-        print("Data recieved")
-        
-    }
-    
-    ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
-    @objc func peerChangedStateNotification(_ notifaction: Notification){
-        print(appDelegate!.mpcHandler.mcSession.connectedPeers)
-        
-        let state = notifaction.userInfo!["state"] as! Int
-        let peerID = notifaction.userInfo!["peerID"] as! MCPeerID
-        switch  MCSessionState.init(rawValue: state){
-        case .connected:
-            ///It will only add the player if device is not already registered
-            if checkIfAvailableSpace(peerID){
-                playersConnected.insert(peerID)
-                print("The player \(peerID.displayName) join the session!")
-            }
-        case .connecting:
-            print("player is connecting")
-        default:
-            break
-        }
-    }
-    ///This function return will tell if we should keep adding players to the connected players set or if we have reached a maximum capacity.
-    func checkIfAvailableSpace(_ peer: MCPeerID) -> Bool{
-        if playersConnected.count < 4{
-            return true
-        }else{
-            //Checking if the extra peer connected, so he can be kicked
-            if appDelegate?.mpcHandler.mcSession.myPeerID == peer{
-                appDelegate?.mpcHandler.mcSession.disconnect()
-                print("Sorry, there was not enough space for \(peer.displayName). Max space is 4 players.")
+            if playerIndex == 0{
+                
             }
             
-            return false
         }
+        //DEBUG
+        //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
+        
+        //Debug - no handler
+        //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
     }
-    
-    func stopAdvertisingIfAdvertising(){
-        if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
-            //assings only to host, indexes and players, in order to send them to other devices
-            assignIndexToPlayers()
-            sendIdxAndNames()
-            retrieveIndexValue()
-            
-            //TEST
-            serveCardsToPlayers()
-            mapToAnimatedCardsAndServe()
-            
-            appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
-            print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising the game")
+    if decodedData.sendingIndexes{
+        for peerID in playersAndReadyStatus.keys{
+            for idxName in decodedData.indexesAndNames{
+                if peerID.displayName == idxName.value{
+                    playerIndexAndPeerID[idxName.key] = peerID
+                    break
+                }
+            }
         }
-    }
-    
-    
-    ///Function that will assign indexes to players , and ready message with names
-    func assignIndexToPlayers(){
+        ///sets the index of the player
+        retrieveIndexValue()
         
-        playerIndexAndPeerID[0] = appDelegate?.mpcHandler.mcSession.myPeerID
-        playerIndexAndNames[0] = playerIndexAndPeerID[0]?.displayName
-        
-        var idx = 1
-        for i in playersConnected where i != appDelegate?.mpcHandler.mcSession.myPeerID{
-            playerIndexAndPeerID[idx] = i
-            playerIndexAndNames[idx] = i.displayName
-            idx += 1
-        }
-    }
-    
-    func sendIdxAndNames(){
-        
-        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardID: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames)
-        
-        let msgData = encodeToJSON(message)
-        
-        
-        do{
-            ///Encoded object will be sent to every player
-            try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
-            
-        }catch{
-            print("Error in sendState \n \(error.localizedDescription)")
-        }
-    }
-    
-    //MARK:DEBUG
-    
-    ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host,  usar con el toggle del boton.
-    @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
-        
-        messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
-        
-        guard let msg = messageToSend.data(using: .utf8,
-                                           allowLossyConversion: true) else {return}
-        do{
-            try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
-            
-        }catch{
-            print(error.localizedDescription)
+        //debug
+        for i in playerIndexAndPeerID{
+            print("Key: \(i.key),Value:\(i.value)")
         }
     }
     
     
-    ///Function for debug only, to coroborate players in session
-    @IBAction func checkConnectedPeers(_ sender: Any) {
-        print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+    print("Data recieved")
+    
+}
+
+///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
+@objc func peerChangedStateNotification(_ notifaction: Notification){
+    print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+    
+    let state = notifaction.userInfo!["state"] as! Int
+    let peerID = notifaction.userInfo!["peerID"] as! MCPeerID
+    switch  MCSessionState.init(rawValue: state){
+    case .connected:
+        ///It will only add the player if device is not already registered
+        if checkIfAvailableSpace(peerID){
+            playersConnected.insert(peerID)
+            print("The player \(peerID.displayName) join the session!")
+        }
+    case .connecting:
+        print("player is connecting")
+    default:
+        break
     }
-    
-    ///Displays an alert controller, for user to choose between joining or hosting, this should only be used for debug purposes
-    func showConnections(){
-        let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
+}
+///This function return will tell if we should keep adding players to the connected players set or if we have reached a maximum capacity.
+func checkIfAvailableSpace(_ peer: MCPeerID) -> Bool{
+    if playersConnected.count < 4{
+        return true
+    }else{
+        //Checking if the extra peer connected, so he can be kicked
+        if appDelegate?.mpcHandler.mcSession.myPeerID == peer{
+            appDelegate?.mpcHandler.mcSession.disconnect()
+            print("Sorry, there was not enough space for \(peer.displayName). Max space is 4 players.")
+        }
         
-        let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
-        
-        let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
-        
-        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-        
-        alert.addAction(hostAction)
-        alert.addAction(joinAction)
-        alert.addAction(cancel)
-        present(alert, animated: true, completion: nil)
+        return false
     }
-    
-    ///Funcion de hosting para alert view, solo para debug
-    func hostSession(sender: UIAlertAction?){
-        //        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
-        //        mcAdvertiserAssistant.start()
+}
+
+func stopAdvertisingIfAdvertising(){
+    if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
+        //assings only to host, indexes and players, in order to send them to other devices
+        assignIndexToPlayers()
+        sendIdxAndNames()
+        retrieveIndexValue()
+        
+        //TEST
+        serveCardsToPlayers()
+        
+        DispatchQueue.main.async {
+            self.mapToAnimatedCardsAndServe()
+        }
+        
+        
+        appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
+        print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising the game")
     }
+}
+
+
+///Function that will assign indexes to players , and ready message with names
+func assignIndexToPlayers(){
     
-    ///Funcion de join para alert view, solo para debug
-    func joinSession(sender: UIAlertAction?){
-        //        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
-        //        browser.delegate = self
-        //        present(browser, animated: true) {
-        //            print("browser presented")
-        //        }
+    playerIndexAndPeerID[0] = appDelegate?.mpcHandler.mcSession.myPeerID
+    playerIndexAndNames[0] = playerIndexAndPeerID[0]?.displayName
+    
+    var idx = 1
+    for i in playersConnected where i != appDelegate?.mpcHandler.mcSession.myPeerID{
+        playerIndexAndPeerID[idx] = i
+        playerIndexAndNames[idx] = i.displayName
+        idx += 1
     }
+}
+
+func sendIdxAndNames(){
+    
+    let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardID: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames)
+    
+    let msgData = encodeToJSON(message)
     
     
+    do{
+        ///Encoded object will be sent to every player
+        try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+        
+    }catch{
+        print("Error in sendState \n \(error.localizedDescription)")
+    }
+}
+
+//MARK:DEBUG
+
+///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host,  usar con el toggle del boton.
+@IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
+    
+    messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
+    
+    guard let msg = messageToSend.data(using: .utf8,
+                                       allowLossyConversion: true) else {return}
+    do{
+        try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+        
+    }catch{
+        print(error.localizedDescription)
+    }
+}
+
+
+///Function for debug only, to coroborate players in session
+@IBAction func checkConnectedPeers(_ sender: Any) {
+    print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+}
+
+///Displays an alert controller, for user to choose between joining or hosting, this should only be used for debug purposes
+func showConnections(){
+    let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
+    
+    let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
+    
+    let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
+    
+    let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+    
+    alert.addAction(hostAction)
+    alert.addAction(joinAction)
+    alert.addAction(cancel)
+    present(alert, animated: true, completion: nil)
+}
+
+///Funcion de hosting para alert view, solo para debug
+func hostSession(sender: UIAlertAction?){
+    //        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
+    //        mcAdvertiserAssistant.start()
+}
+
+///Funcion de join para alert view, solo para debug
+func joinSession(sender: UIAlertAction?){
+    //        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
+    //        browser.delegate = self
+    //        present(browser, animated: true) {
+    //            print("browser presented")
+    //        }
+}
+
+
 }
 
 

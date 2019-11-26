@@ -28,7 +28,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        imageCool.startingPosition()
+        imageCool.startingPosition(viewC: self)
        
         tableView.layer.zPosition = -3
         imageCool.layer.zPosition = -1
@@ -43,7 +43,7 @@ checkFunctionToLoad()
     
     @IBAction func animateImage(_ sender: Any) {
     
-        imageCool.serve(indexCard: &cardIndex)
+        imageCool.serve(indexCard: &cardIndex, viewC: self)
         cardIndex += 1
         
     }

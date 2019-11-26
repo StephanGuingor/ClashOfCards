@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import MultipeerConnectivity
 
 class Stack<T>{
     private var listStack : [T] = []
@@ -28,14 +29,25 @@ class Stack<T>{
 }
 
 class HomeStack : Stack<Cards>{
-    private var listStack : [Cards] = []
+     var listStack : [Cards] = []
+    
+    override func pop() -> Cards? {
+        if listStack.count <= 0{
+                print("empty stack")
+                return nil
+            }
+            let tmp = listStack.last
+            listStack.removeLast()
+            return tmp!
+        }
     
     func serve(player: Player){
         if listStack.count > 0{
-            guard let tmp = self.pop() else {
+            guard let tmp = pop() else {
                 return
             }
             //animation to player
+            print(tmp.name!)
             player.playerStack.push(value: tmp)
         }
     }
@@ -79,13 +91,16 @@ class HomeStack : Stack<Cards>{
 
 
 class PlayerStack : Stack<Cards>{
-    private var listStack : [Cards] = []
+     var listStack : [Cards] = []
     
+    override func push(value: Cards) {
+        listStack.append(value)
+    }
     func grab(hStack: Stack<Cards>){
         guard let tmp = hStack.pop() else {
             return
         }
-        self.push(value: tmp)
+        push(value: tmp)
         
     }
 
@@ -93,9 +108,12 @@ class PlayerStack : Stack<Cards>{
 
 
 class Player{
-    let playerStack : PlayerStack
-    
-    init(playerStack: PlayerStack){
-        self.playerStack = playerStack
+    let playerStack : PlayerStack = PlayerStack()
+    let peerID : MCPeerID
+    let playerIdx:Int
+    init(peerID:MCPeerID,index:Int) {
+        self.peerID = peerID
+        self.playerIdx = index
     }
+   
 }

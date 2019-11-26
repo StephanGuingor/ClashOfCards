@@ -16,16 +16,22 @@ class AnimatedCard: UIImageView {
         self.isUserInteractionEnabled = true
     }
     
-    func startingPosition(){
+    func startingPosition(viewC : UIViewController){
+//        self.image = image DEBUG
+        viewC.view.addSubview(self)
+        self.bounds = CGRect(x: viewC.view.bounds.width * 0.025, y: viewC.view.bounds.width * 0.10, width: viewC.view.bounds.width * 0.060, height: viewC.view.bounds.width * 0.025)
         
-        self.layer.isHidden = true
-        self.layer.transform = CATransform3DRotate(self.layer.transform, CGFloat.pi, 0, 0.0, -0.5)
+        self.layer.isHidden = false
+        self.layer.position = viewC.view.center
+        self.layer.transform = CATransform3DRotate(self.layer.transform, CGFloat.pi, 0, 0, -0.5)
         self.layer.zPosition = self.bounds.width
         
         
     }
-    func serve(indexCard: inout Int){
+    func serve(indexCard: inout Int, viewC: UIViewController){
+        
         var tmp = indexCard
+        
         if tmp >= 5{
             indexCard = -1
             tmp = 0
@@ -44,8 +50,8 @@ class AnimatedCard: UIImageView {
         //POSITION ANIMATION
         let positionAnimation = CABasicAnimation(keyPath: "position")
         positionAnimation.duration = 1
-        positionAnimation.fromValue = NSValue(cgPoint: CGPoint(x: self.center.x - 20, y: self.center.y - 15)) // we have to wrap c types in NSVAlUE in order to animate
-        positionAnimation.toValue = NSValue(cgPoint: CGPoint(x: (superview?.center.x)! - CGFloat(tmp * 50), y: (superview?.bounds.maxY)!))
+        positionAnimation.fromValue = NSValue(cgPoint: CGPoint(x: self.center.x - 30, y: self.center.y - 15)) // we have to wrap c types in NSVAlUE in order to animate
+        positionAnimation.toValue = NSValue(cgPoint: CGPoint(x: (viewC.view.center.x) - CGFloat(tmp * 50), y: (viewC.view.bounds.maxY)))
         
         //SETTING ROTATION FUNCTION
         let transformAnimation = CABasicAnimation(keyPath: "transform")
@@ -57,15 +63,15 @@ class AnimatedCard: UIImageView {
         let scaleAnimation = CABasicAnimation(keyPath: "bounds")
         scaleAnimation.duration = 1
         scaleAnimation.fromValue = NSValue(cgRect: self.layer.bounds )
-        scaleAnimation.toValue = NSValue(cgRect: CGRect(x: self.center.x, y: self.center.y, width: self.layer.bounds.height * 50, height: self.layer.bounds.width * 50))
+        scaleAnimation.toValue = NSValue(cgRect: CGRect(x: self.center.x, y: self.center.y, width: self.layer.bounds.height * 10, height: self.layer.bounds.width * 10))
         
         //SETTING SCALE
-        self.layer.bounds = CGRect(x: self.center.x, y: self.center.y, width: self.layer.bounds.height * 50, height: self.layer.bounds.width * 50)
+        self.layer.bounds = CGRect(x: self.center.x, y: self.center.y, width: self.layer.bounds.height * 10, height: self.layer.bounds.width * 10)
         //SETTING TRANSFORM
         self.layer.transform = CATransform3DRotate(self.layer.transform, CGFloat.pi, 0.0, 0, 0.5)
         //SETTING POSITION VALUE
-        self.layer.position.x = (superview?.center.x)! - CGFloat(tmp * 50)
-        self.layer.position.y = (superview?.bounds.maxY)!
+        self.layer.position.x = (viewC.view.center.x) - CGFloat(tmp * 50)
+        self.layer.position.y = (viewC.view.bounds.maxY)
         
         
         //ADDING ANIMATIONS

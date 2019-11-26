@@ -18,6 +18,7 @@ protocol ResponseType {
     var sendingIndexes:Bool {get set}
     var indexesAndNames:[Int:String] {get set}
 }
+
 struct dtJson: Codable,ResponseType{
    var name:String
    var index:Int

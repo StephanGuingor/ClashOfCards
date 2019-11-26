@@ -86,8 +86,10 @@ class GameViewController: UIViewController {
         appDelegate?.mpcHandler.initialSetUp()
         
         //GameStart SetUp:
-        homeStack.generateCards() // generates from the start all cards needed
-        mapHomeStackToDictionary() // maps cards to a dictionary
+        homeStack.generateCards {
+            self.mapHomeStackToDictionary() // maps cards to a dictionary
+        } // generates from the start all cards needed
+        
         
         //Check si el usuario hizo click en el button de join o de host
         joinOrHost()
@@ -135,7 +137,7 @@ class GameViewController: UIViewController {
             print("JSON Decode Failed \(error.localizedDescription)")
         }
         //default
-        return dtJson(name: "", index: -1, ready: false, cardID: "", targetPeer: -1,sendingIndexes: false, indexesAndNames: [-1:""])
+        return dtJson(name: "", index: -1, ready: false, cardIDs: [], targetPeer: -1,sendingIndexes: false, indexesAndNames: [-1:""],sendingCards: false)
     }
     //MARK:Set Up Circle View
     func setUpCircleView(_ initialColor:Color,_ secondaryColor:Color){
@@ -181,10 +183,8 @@ class GameViewController: UIViewController {
                 //it will also send the idx and names
                 stopAdvertisingIfAdvertising()
                 
-                //debug
-                if playerIndex == 0{
-                    
-                }
+                //Cards ids will be sent to other players
+                sendCardsToPlayerExceptHost()
                 
             }
             
@@ -201,7 +201,7 @@ class GameViewController: UIViewController {
     ///Sends an object from dataToJSON that everyone will recieve, the important piece is if the player is ready
     func sendStateIsReadyOrUnReady(_ ready: Bool){
         
-        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: ready, cardID: nil, targetPeer: nil,sendingIndexes: nil, idxAndNames: nil)
+        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: ready, cardIDs: nil, targetPeer: nil,sendingIndexes: nil, idxAndNames: nil, sendingCards: false)
         
         let msgData = encodeToJSON(message)
         
@@ -271,7 +271,7 @@ class GameViewController: UIViewController {
             return Player(peerID: peerID, index: index)
         }
     }
-    ///Initial serve to players, everyone will recieve five cards
+    ///Initial serve to players, everyone will recieve five cards, Only executed by host
     func serveCardsToPlayers(){
         homeStack.shuffle()
         createPlayers()
@@ -327,12 +327,43 @@ class GameViewController: UIViewController {
                 card.serve(indexCard: &idx, viewC: self)
                 idx += 1
                 
-            
-            }
+        }
     }
 }
+    ///This should only be runned by host, so playerIDx cant be 0
+    func retrieveCardIDS(playerIdx: Int) -> [String]{
+        return listOfPlayers[playerIdx].playerStack.listStack.reduce(into: []) { (res, card) in
+            return res.append(card.idName!)
+        }
+    }
     
+    ///This functions sends cards to the other players, always sent from host
+    func sendCardsToServePlayer(player: Player){
+        
+        let cardsToSend = retrieveCardIDS(playerIdx: player.playerIdx)
+        
+        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: false, cardIDs: cardsToSend, targetPeer: nil,sendingIndexes: nil, idxAndNames: nil, sendingCards: true)
+        
+        let msgData = encodeToJSON(message)
+        
+        
+        do{
+            ///Encoded object will be sent to every player
+            try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+            
+        }catch{
+            print("Error in sendState \n \(error.localizedDescription)")
+        }
+        
+    }
 
+    func sendCardsToPlayerExceptHost(){
+        if playerIndex == 0{
+            for player in listOfPlayers where player.playerIdx != 0{
+            sendCardsToServePlayer(player: player)
+            }
+        }
+    }
 
 //MARK: MPC Handler
 
@@ -361,8 +392,9 @@ func joinSession2(){
 func hostSession2(){
     appDelegate?.mpcHandler.hostSession()
 }
-
-///Function runned by observer in charge of data notifications
+    
+//MARK: RECIEVED DATA NOTIFICATION
+    ///Function runned by observer in charge of data notifications
 @objc func recievedDataNotification(_ notification: Notification){
     let data = notification.userInfo!["data"] as? Data
     let peer = notification.userInfo!["peerID"] as? MCPeerID
@@ -372,59 +404,91 @@ func hostSession2(){
     
     let decodedData = decodeToJSON(data!)
     
-    //MARK:GS Getting Ready - Data
-    ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep running
+      //MARK:GS Getting Ready - Data
     
+    //This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep executing
+    gameSetUp(peer, decodedData)
     
-    //This will be runned before the game has started
-    if !playersReady{
-        //sets the peer and state in a dictionary
-        playersAndReadyStatus[peer!] = decodedData.ready
-        
-        
-        //if everyone is ready, game will start
-        if checkIfEveryoneIsReady(){
-            playersReady = true
-            
-            //Will set circle view to green and label to playing, if recieving data
-            updateViewToStartGame()
-            stopAdvertisingIfAdvertising()
-            
-            //debug
-            if playerIndex == 0{
-                
-            }
-            
-        }
-        //DEBUG
-        //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
-        
-        //Debug - no handler
-        //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
-    }
-    if decodedData.sendingIndexes{
-        for peerID in playersAndReadyStatus.keys{
-            for idxName in decodedData.indexesAndNames{
-                if peerID.displayName == idxName.value{
-                    playerIndexAndPeerID[idxName.key] = peerID
-                    break
-                }
-            }
-        }
-        ///sets the index of the player
-        retrieveIndexValue()
-        
-        //debug
-        for i in playerIndexAndPeerID{
-            print("Key: \(i.key),Value:\(i.value)")
-        }
-    }
+    //MARK: GS Game Start - Data
     
+    ifSendingIndexes(decodedData)
+    
+    serveToPlayerExceptHost(decodedData)
     
     print("Data recieved")
     
 }
-
+    
+    ///If host sent cards then players will recieve their cards with their respective animation.
+    func serveToPlayerExceptHost(_ decodedData: dtJson){
+        if decodedData.sendingCards == true{
+             createPlayers()
+         
+            for i in decodedData.cardIDs{
+                listOfPlayers[playerIndex!]
+                .playerStack
+                .listStack
+                .append(dictionaryOfCards[i]!)
+            }
+            mapToAnimatedCardsAndServe()
+        }
+       
+        
+    }
+    
+    
+    ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep executing
+    func gameSetUp(_ peer: MCPeerID?, _ decodedData: dtJson) {
+      
+        //This will be runned before the game has started
+        if !playersReady{
+            //sets the peer and state in a dictionary
+            playersAndReadyStatus[peer!] = decodedData.ready
+            
+            //if everyone is ready, game will start
+            if checkIfEveryoneIsReady(){
+                playersReady = true
+                
+                //Will set circle view to green and label to playing, if recieving data
+                updateViewToStartGame()
+                stopAdvertisingIfAdvertising()
+                
+                //Send cards id to all players except host
+                sendCardsToPlayerExceptHost()
+            }
+            
+        }
+    }
+    
+    ///Function that will set the indexes for all players if needed
+    func ifSendingIndexes(_ decodedData: dtJson) {
+       
+        if decodedData.sendingIndexes{
+            for peerID in playersAndReadyStatus.keys{
+                for idxName in decodedData.indexesAndNames{
+                    if peerID.displayName == idxName.value{
+                        playerIndexAndPeerID[idxName.key] = peerID
+                        break
+                    }
+                }
+            }
+            ///sets the index of the player
+            retrieveIndexValue()
+            
+            //debug
+            for i in playerIndexAndPeerID{
+                print("Key: \(i.key),Value:\(i.value)")
+            }
+        }
+        //DEBUG
+               //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
+               
+               //Debug - no handler
+               //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
+    }
+    
+    
+//MARK: CHANGED STATE NOTIFICATION
 ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
 @objc func peerChangedStateNotification(_ notifaction: Notification){
     print(appDelegate!.mpcHandler.mcSession.connectedPeers)
@@ -496,7 +560,7 @@ func assignIndexToPlayers(){
 
 func sendIdxAndNames(){
     
-    let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardID: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames)
+    let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardIDs: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames, sendingCards: false)
     
     let msgData = encodeToJSON(message)
     

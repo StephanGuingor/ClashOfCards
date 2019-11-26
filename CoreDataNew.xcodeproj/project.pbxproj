@@ -20,6 +20,9 @@
 		D4560D91237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4560D8F237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift */; };
 		D4560D92237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */; };
 		D4560D94237B1F3E004B92F2 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4560D93237B1F3E004B92F2 /* TableViewCell.swift */; };
+		D45F1751238DA278003DA94C /* HomeStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1750238DA278003DA94C /* HomeStack.swift */; };
+		D45F1753238DA2BE003DA94C /* PlayerStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1752238DA2BE003DA94C /* PlayerStack.swift */; };
+		D45F1755238DA30B003DA94C /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1754238DA30B003DA94C /* PlayerModel.swift */; };
 		D4661210238B1001000D4C16 /* CircleGameLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D466120F238B1001000D4C16 /* CircleGameLiveView.swift */; };
 		D48419AA2385BE1800FC2298 /* Impacted.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419A82385BE1800FC2298 /* Impacted.ttf */; };
 		D48419AB2385BE1800FC2298 /* impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419A92385BE1800FC2298 /* impact.ttf */; };
@@ -52,6 +55,9 @@
 		D4560D8F237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		D4560D93237B1F3E004B92F2 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		D45F1750238DA278003DA94C /* HomeStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStack.swift; sourceTree = "<group>"; };
+		D45F1752238DA2BE003DA94C /* PlayerStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStack.swift; sourceTree = "<group>"; };
+		D45F1754238DA30B003DA94C /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
 		D466120F238B1001000D4C16 /* CircleGameLiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleGameLiveView.swift; sourceTree = "<group>"; };
 		D48419A82385BE1800FC2298 /* Impacted.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Impacted.ttf; sourceTree = "<group>"; };
 		D48419A92385BE1800FC2298 /* impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = impact.ttf; sourceTree = "<group>"; };
@@ -129,6 +135,9 @@
 				D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */,
 				D454619E2379F82300466D70 /* ClashRoyaleCards.swift */,
 				D421C8FE237DEDD600BC1D12 /* Stack.swift */,
+				D45F1754238DA30B003DA94C /* PlayerModel.swift */,
+				D45F1752238DA2BE003DA94C /* PlayerStack.swift */,
+				D45F1750238DA278003DA94C /* HomeStack.swift */,
 				D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */,
 			);
 			path = Models;
@@ -321,10 +330,12 @@
 				D48419B22385C16400FC2298 /* MainViewController.swift in Sources */,
 				D454619F2379F82300466D70 /* ClashRoyaleCards.swift in Sources */,
 				D4BBD0F5238888A400CC3DD9 /* sendingDataModel.swift in Sources */,
+				D45F1751238DA278003DA94C /* HomeStack.swift in Sources */,
 				D454617E2379B9F900466D70 /* ViewController.swift in Sources */,
 				D4560D94237B1F3E004B92F2 /* TableViewCell.swift in Sources */,
 				D421C8FD237DA94E00BC1D12 /* AnimatedCard.swift in Sources */,
 				D4C316AA2386268600E6E717 /* NotificationHandler.swift in Sources */,
+				D45F1755238DA30B003DA94C /* PlayerModel.swift in Sources */,
 				D45461842379B9FA00466D70 /* CoreDataNew.xcdatamodeld in Sources */,
 				D421C8FF237DEDD600BC1D12 /* Stack.swift in Sources */,
 				D48419B42385C83500FC2298 /* popUpViewController.swift in Sources */,
@@ -332,6 +343,7 @@
 				D4661210238B1001000D4C16 /* CircleGameLiveView.swift in Sources */,
 				D48419B02385C01000FC2298 /* Shadow.swift in Sources */,
 				D454617A2379B9F900466D70 /* AppDelegate.swift in Sources */,
+				D45F1753238DA2BE003DA94C /* PlayerStack.swift in Sources */,
 				D4560D91237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -31,6 +31,7 @@
 		D48419B22385C16400FC2298 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48419B12385C16400FC2298 /* MainViewController.swift */; };
 		D48419B42385C83500FC2298 /* popUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48419B32385C83500FC2298 /* popUpViewController.swift */; };
 		D48419B62385EF9000FC2298 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48419B52385EF9000FC2298 /* GameViewController.swift */; };
+		D4AC8EFD238F73A10054F863 /* UIViewExtensionBorders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AC8EFC238F73A10054F863 /* UIViewExtensionBorders.swift */; };
 		D4BBD0F5238888A400CC3DD9 /* sendingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */; };
 		D4C316AA2386268600E6E717 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C316A92386268600E6E717 /* NotificationHandler.swift */; };
 		F141B8BB6B1A6966950FF220 /* Pods_CoreDataNew.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2813141298911AD53891FBD9 /* Pods_CoreDataNew.framework */; };
@@ -66,6 +67,7 @@
 		D48419B12385C16400FC2298 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D48419B32385C83500FC2298 /* popUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = popUpViewController.swift; sourceTree = "<group>"; };
 		D48419B52385EF9000FC2298 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		D4AC8EFC238F73A10054F863 /* UIViewExtensionBorders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionBorders.swift; sourceTree = "<group>"; };
 		D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sendingDataModel.swift; sourceTree = "<group>"; };
 		D4C316A92386268600E6E717 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -157,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				D48419AF2385C01000FC2298 /* Shadow.swift */,
+				D4AC8EFC238F73A10054F863 /* UIViewExtensionBorders.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -338,6 +341,7 @@
 				D45F1755238DA30B003DA94C /* PlayerModel.swift in Sources */,
 				D45461842379B9FA00466D70 /* CoreDataNew.xcdatamodeld in Sources */,
 				D421C8FF237DEDD600BC1D12 /* Stack.swift in Sources */,
+				D4AC8EFD238F73A10054F863 /* UIViewExtensionBorders.swift in Sources */,
 				D48419B42385C83500FC2298 /* popUpViewController.swift in Sources */,
 				D45461922379BA9700466D70 /* CoreDataService.swift in Sources */,
 				D4661210238B1001000D4C16 /* CircleGameLiveView.swift in Sources */,

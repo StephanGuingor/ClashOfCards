@@ -43,6 +43,13 @@ class GameViewController: UIViewController {
     
     //MARK: Game Settings
     //in order to map index value and peers
+//Player Bounds
+    @IBOutlet weak var player1BoundsView: newView!
+    
+    @IBOutlet weak var player2BoundsView: newView!
+    
+    @IBOutlet weak var player3BoundsView: newView!
+    
     
     //MARK: GS Getting Ready - Variables
     ///Keep track of all connected players
@@ -67,7 +74,12 @@ class GameViewController: UIViewController {
     var dictionaryOfCards:[String:Cards] = [:]
     ///Has player index
     var playerIndex:Int?
-    
+    ///Array of all the animated card views
+    var animatedCardArray:[AnimatedCard]?
+    ///Value of the selected card
+    var selectedAnimatedCard = AnimatedCard(image: nil)
+    ///Manages the index for elixir drop
+    var elixirDropIdx:Int!
     override func viewDidLoad() {
         super.viewDidLoad()
         UserDefaults.standard.set(56, forKey: "score")
@@ -304,32 +316,72 @@ class GameViewController: UIViewController {
         }
     }
     
+    func setTargetPlayers(){
+        let dropZonesArray = [player1BoundsView,player2BoundsView,player3BoundsView]
+        
+        let otherPlayers = popCurrentDeviceFromListOfPlayers()
+        let numberOfPlayers = otherPlayers.count
+
+        
+        for i in 0 ... numberOfPlayers{
+            ///This will set a peer to another view, this way the ui can get updated with player information. It adds them in an unordered way.
+            dropZonesArray[i]?.setTargetPeer(target: otherPlayers[i])
+        }
+    }
+    
+    func popCurrentDeviceFromListOfPlayers() -> [Player]{
+        return listOfPlayers.filter { (ply) -> Bool in
+            return ply.peerID != appDelegate?.mpcHandler.mcSession.myPeerID
+        }
+    }
+    
+    //MARK:Animation in GS Start
     ///Creates all the animated cards for the player and serves them to the player
     func mapToAnimatedCardsAndServe(){
         let cardsToServe = listOfPlayers[playerIndex!].playerStack.listStack
-        
-        let animatedCards = cardsToServe.map { (Card) -> AnimatedCard in
+        elixirDropIdx = -1
+        animatedCardArray = cardsToServe.map { (Card) -> AnimatedCard in
             do{
                 let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
-                return AnimatedCard(image: UIImage(data: dataImage))
+                elixirDropIdx += 1
+                return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
             }catch{
                 print("Cant convert data")
-                return AnimatedCard()
+                return AnimatedCard(image: nil)
             }
         }
-        
+        //FIXME:LAYER
         var idx = 0
-        let order = [-2,-3,-4,-1,0]
-        for card in animatedCards{
+//        let order = [-2,-3,-4,-1,0]
+        for card in animatedCardArray!{
             DispatchQueue.main.async {
                 card.startingPosition(viewC: self)
-                card.layer.zPosition = CGFloat(order[idx])
+                card.layer.zPosition = 0
                 card.serve(indexCard: &idx, viewC: self)
                 idx += 1
                 
+            }
         }
     }
-}
+    
+    
+    func checkPlayerStackAndSelectedCardToDisable(reset: Bool, retrieveSelected: Bool ){
+        if playerIndex != nil{
+        for card in animatedCardArray!{
+            if reset{
+                if card.selectedCard{
+                card.reverseOnTapAnimation()
+                card.selectedCard = false
+                }
+                
+                //I might call a back function for the animation
+            }
+        }
+        }else{
+            print("player index has not been set")
+        }
+    }
+    
     ///This should only be runned by host, so playerIDx cant be 0
     func retrieveCardIDS(playerIdx: Int) -> [String]{
         return listOfPlayers[playerIdx].playerStack.listStack.reduce(into: []) { (res, card) in
@@ -356,90 +408,91 @@ class GameViewController: UIViewController {
         }
         
     }
-
+    
+    ///Will send cards to every device connected, in order to recieve cards. Runned by host.
     func sendCardsToPlayerExceptHost(){
         if playerIndex == 0{
             for player in listOfPlayers where player.playerIdx != 0{
-            sendCardsToServePlayer(player: player)
+                sendCardsToServePlayer(player: player)
             }
         }
     }
-
-//MARK: MPC Handler
-
-//Check si el usuario hizo click en el button de join o de host
-func joinOrHost(){
-    ///Adding hosting device to the connected players set
-    //we have to add both players to connected players, because they wont recieve notifications about theirselves
-    playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
     
-    if join ?? false{
-        joinSession2()
+    //MARK: MPC Handler
+    
+    //Check si el usuario hizo click en el button de join o de host
+    func joinOrHost(){
+        ///Adding hosting device to the connected players set
+        //we have to add both players to connected players, because they wont recieve notifications about theirselves
+        playersConnected.insert(appDelegate!.mpcHandler.mcSession.myPeerID)
         
-    }else{
-        hostSession2()
-        
-        
-        print("Welcome \(appDelegate!.mpcHandler.mcSession.myPeerID) to your session!")
+        if join ?? false{
+            joinSession2()
+            
+        }else{
+            hostSession2()
+            
+            
+            print("Welcome \(appDelegate!.mpcHandler.mcSession.myPeerID) to your session!")
+        }
     }
-}
-///Brings up MCBrowser Controller in order to join to an existing session
-func joinSession2(){
-    appDelegate?.mpcHandler.joinSession(delegate: self, from: self)
-}
-
-/// Via de MCAdvertiserAssistant, it advertises current session  to other devices
-func hostSession2(){
-    appDelegate?.mpcHandler.hostSession()
-}
+    ///Brings up MCBrowser Controller in order to join to an existing session
+    func joinSession2(){
+        appDelegate?.mpcHandler.joinSession(delegate: self, from: self)
+    }
     
-//MARK: RECIEVED DATA NOTIFICATION
+    /// Via de MCAdvertiserAssistant, it advertises current session  to other devices
+    func hostSession2(){
+        appDelegate?.mpcHandler.hostSession()
+    }
+    
+    //MARK: RECIEVED DATA NOTIFICATION
     ///Function runned by observer in charge of data notifications
-@objc func recievedDataNotification(_ notification: Notification){
-    let data = notification.userInfo!["data"] as? Data
-    let peer = notification.userInfo!["peerID"] as? MCPeerID
-    
-    //this variable is for debug purposes, this will name of device.
-    //        let recievedString = String(bytes: data!, encoding: .utf8) -debug
-    
-    let decodedData = decodeToJSON(data!)
-    
-      //MARK:GS Getting Ready - Data
-    
-    //This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep executing
-    gameSetUp(peer, decodedData)
-    
-    //MARK: GS Game Start - Data
-    
-    ifSendingIndexes(decodedData)
-    
-    serveToPlayerExceptHost(decodedData)
-    
-    print("Data recieved")
-    
-}
+    @objc func recievedDataNotification(_ notification: Notification){
+        let data = notification.userInfo!["data"] as? Data
+        let peer = notification.userInfo!["peerID"] as? MCPeerID
+        
+        //this variable is for debug purposes, this will name of device.
+        //        let recievedString = String(bytes: data!, encoding: .utf8) -debug
+        
+        let decodedData = decodeToJSON(data!)
+        
+        //MARK:GS Getting Ready - Data
+        
+        //This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep executing
+        gameSetUp(peer, decodedData)
+        
+        //MARK: GS Game Start - Data
+        
+        ifSendingIndexes(decodedData)
+        
+        serveToPlayerExceptHost(decodedData)
+        
+        print("Data recieved")
+        
+    }
     
     ///If host sent cards then players will recieve their cards with their respective animation.
     func serveToPlayerExceptHost(_ decodedData: dtJson){
         if decodedData.sendingCards == true{
-             createPlayers()
-         
+            createPlayers()
+            
             for i in decodedData.cardIDs{
                 listOfPlayers[playerIndex!]
-                .playerStack
-                .listStack
-                .append(dictionaryOfCards[i]!)
+                    .playerStack
+                    .listStack
+                    .append(dictionaryOfCards[i]!)
             }
             mapToAnimatedCardsAndServe()
         }
-       
+        
         
     }
     
     
     ///This is to manage all the ready states in the game in order to begin, once the game is runnning; this function will not keep executing
     func gameSetUp(_ peer: MCPeerID?, _ decodedData: dtJson) {
-      
+        
         //This will be runned before the game has started
         if !playersReady{
             //sets the peer and state in a dictionary
@@ -462,7 +515,7 @@ func hostSession2(){
     
     ///Function that will set the indexes for all players if needed
     func ifSendingIndexes(_ decodedData: dtJson) {
-       
+        
         if decodedData.sendingIndexes{
             for peerID in playersAndReadyStatus.keys{
                 for idxName in decodedData.indexesAndNames{
@@ -481,156 +534,156 @@ func hostSession2(){
             }
         }
         //DEBUG
-               //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
-               
-               //Debug - no handler
-               //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
+        //        readyUpButton.setAttributedTitle(NSAttributedString(string: peer!.displayName, attributes: fontAttributes), for: .normal)
+        
+        //Debug - no handler
+        //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
     }
     
     
-//MARK: CHANGED STATE NOTIFICATION
-///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
-@objc func peerChangedStateNotification(_ notifaction: Notification){
-    print(appDelegate!.mpcHandler.mcSession.connectedPeers)
-    
-    let state = notifaction.userInfo!["state"] as! Int
-    let peerID = notifaction.userInfo!["peerID"] as! MCPeerID
-    switch  MCSessionState.init(rawValue: state){
-    case .connected:
-        ///It will only add the player if device is not already registered
-        if checkIfAvailableSpace(peerID){
-            playersConnected.insert(peerID)
-            print("The player \(peerID.displayName) join the session!")
+    //MARK: CHANGED STATE NOTIFICATION
+    ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
+    @objc func peerChangedStateNotification(_ notifaction: Notification){
+        print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+        
+        let state = notifaction.userInfo!["state"] as! Int
+        let peerID = notifaction.userInfo!["peerID"] as! MCPeerID
+        switch  MCSessionState.init(rawValue: state){
+        case .connected:
+            ///It will only add the player if device is not already registered
+            if checkIfAvailableSpace(peerID){
+                playersConnected.insert(peerID)
+                print("The player \(peerID.displayName) join the session!")
+            }
+        case .connecting:
+            print("player is connecting")
+        default:
+            break
         }
-    case .connecting:
-        print("player is connecting")
-    default:
-        break
     }
-}
-///This function return will tell if we should keep adding players to the connected players set or if we have reached a maximum capacity.
-func checkIfAvailableSpace(_ peer: MCPeerID) -> Bool{
-    if playersConnected.count < 4{
-        return true
-    }else{
-        //Checking if the extra peer connected, so he can be kicked
-        if appDelegate?.mpcHandler.mcSession.myPeerID == peer{
-            appDelegate?.mpcHandler.mcSession.disconnect()
-            print("Sorry, there was not enough space for \(peer.displayName). Max space is 4 players.")
+    ///This function return will tell if we should keep adding players to the connected players set or if we have reached a maximum capacity.
+    func checkIfAvailableSpace(_ peer: MCPeerID) -> Bool{
+        if playersConnected.count < 4{
+            return true
+        }else{
+            //Checking if the extra peer connected, so he can be kicked
+            if appDelegate?.mpcHandler.mcSession.myPeerID == peer{
+                appDelegate?.mpcHandler.mcSession.disconnect()
+                print("Sorry, there was not enough space for \(peer.displayName). Max space is 4 players.")
+            }
+            
+            return false
         }
-        
-        return false
     }
-}
-
-func stopAdvertisingIfAdvertising(){
-    if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
-        //assings only to host, indexes and players, in order to send them to other devices
-        assignIndexToPlayers()
-        sendIdxAndNames()
-        retrieveIndexValue()
-        
-        //TEST
-        serveCardsToPlayers()
-        
-        DispatchQueue.main.async {
-            self.mapToAnimatedCardsAndServe()
+    
+    ///If device is advertising (if host) it will stop.
+    func stopAdvertisingIfAdvertising(){
+        if appDelegate!.mpcHandler.mcAdvertiserAssistant != nil{
+            //assings only to host, indexes and players, in order to send them to other devices
+            assignIndexToPlayers()
+            sendIdxAndNames()
+            retrieveIndexValue()
+            
+            //TEST
+            serveCardsToPlayers()
+            
+            DispatchQueue.main.async {
+                self.mapToAnimatedCardsAndServe()
+            }
+            
+            
+            appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
+            print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising the game")
         }
+    }
+    
+    
+    ///Function that will assign indexes to players , and ready message with names
+    func assignIndexToPlayers(){
+        
+        playerIndexAndPeerID[0] = appDelegate?.mpcHandler.mcSession.myPeerID
+        playerIndexAndNames[0] = playerIndexAndPeerID[0]?.displayName
+        
+        var idx = 1
+        for i in playersConnected where i != appDelegate?.mpcHandler.mcSession.myPeerID{
+            playerIndexAndPeerID[idx] = i
+            playerIndexAndNames[idx] = i.displayName
+            idx += 1
+        }
+    }
+    
+    func sendIdxAndNames(){
+        
+        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardIDs: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames, sendingCards: false)
+        
+        let msgData = encodeToJSON(message)
         
         
-        appDelegate?.mpcHandler.mcAdvertiserAssistant!.stop()
-        print("\(appDelegate!.mpcHandler.mcSession.myPeerID.displayName) has stopped advertising the game")
+        do{
+            ///Encoded object will be sent to every player
+            try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+            
+        }catch{
+            print("Error in sendState \n \(error.localizedDescription)")
+        }
     }
-}
-
-
-///Function that will assign indexes to players , and ready message with names
-func assignIndexToPlayers(){
     
-    playerIndexAndPeerID[0] = appDelegate?.mpcHandler.mcSession.myPeerID
-    playerIndexAndNames[0] = playerIndexAndPeerID[0]?.displayName
+    //MARK:DEBUG
     
-    var idx = 1
-    for i in playersConnected where i != appDelegate?.mpcHandler.mcSession.myPeerID{
-        playerIndexAndPeerID[idx] = i
-        playerIndexAndNames[idx] = i.displayName
-        idx += 1
-    }
-}
-
-func sendIdxAndNames(){
-    
-    let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: true, cardIDs: nil, targetPeer: nil,sendingIndexes: true, idxAndNames: playerIndexAndNames, sendingCards: false)
-    
-    let msgData = encodeToJSON(message)
-    
-    
-    do{
-        ///Encoded object will be sent to every player
-        try appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+    ///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host,  usar con el toggle del boton.
+    @IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
         
-    }catch{
-        print("Error in sendState \n \(error.localizedDescription)")
-    }
-}
-
-//MARK:DEBUG
-
-///Esta funcion es solo para debugging, muestra una alerta para unirse o hacer host,  usar con el toggle del boton.
-@IBAction func sendMCPeerIDToPlayersInSession(_ sender: UIButton){
-    
-    messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
-    
-    guard let msg = messageToSend.data(using: .utf8,
-                                       allowLossyConversion: true) else {return}
-    do{
-        try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+        messageToSend = "\(appDelegate?.mpcHandler.peerID.displayName ?? "none")"
         
-    }catch{
-        print(error.localizedDescription)
+        guard let msg = messageToSend.data(using: .utf8,
+                                           allowLossyConversion: true) else {return}
+        do{
+            try appDelegate!.mpcHandler.mcSession.send(msg, toPeers: appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+            
+        }catch{
+            print(error.localizedDescription)
+        }
     }
-}
-
-
-///Function for debug only, to coroborate players in session
-@IBAction func checkConnectedPeers(_ sender: Any) {
-    print(appDelegate!.mpcHandler.mcSession.connectedPeers)
-}
-
-///Displays an alert controller, for user to choose between joining or hosting, this should only be used for debug purposes
-func showConnections(){
-    let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
     
-    let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
     
-    let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
+    ///Function for debug only, to coroborate players in session
+    @IBAction func checkConnectedPeers(_ sender: Any) {
+        print(appDelegate!.mpcHandler.mcSession.connectedPeers)
+    }
     
-    let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+    ///Displays an alert controller, for user to choose between joining or hosting, this should only be used for debug purposes
+    func showConnections(){
+        let alert = UIAlertController(title: "Available Connections", message: "Choose the best one", preferredStyle: .alert)
+        
+        let hostAction  = UIAlertAction(title: "host session", style: .default, handler: hostSession)
+        
+        let joinAction = UIAlertAction(title: "join session", style: .default, handler: joinSession)
+        
+        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(hostAction)
+        alert.addAction(joinAction)
+        alert.addAction(cancel)
+        present(alert, animated: true, completion: nil)
+    }
     
-    alert.addAction(hostAction)
-    alert.addAction(joinAction)
-    alert.addAction(cancel)
-    present(alert, animated: true, completion: nil)
+    ///Funcion de hosting para alert view, solo para debug
+    func hostSession(sender: UIAlertAction?){
+        //        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
+        //        mcAdvertiserAssistant.start()
+    }
+    
+    ///Funcion de join para alert view, solo para debug
+    func joinSession(sender: UIAlertAction?){
+        //        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
+        //        browser.delegate = self
+        //        present(browser, animated: true) {
+        //            print("browser presented")
+        //        }
+    }
+    
+    
 }
-
-///Funcion de hosting para alert view, solo para debug
-func hostSession(sender: UIAlertAction?){
-    //        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: mcSession)
-    //        mcAdvertiserAssistant.start()
-}
-
-///Funcion de join para alert view, solo para debug
-func joinSession(sender: UIAlertAction?){
-    //        let browser = MCBrowserViewController(serviceType: "chat", session: mcSession)
-    //        browser.delegate = self
-    //        present(browser, animated: true) {
-    //            print("browser presented")
-    //        }
-}
-
-
-}
-
 
 extension GameViewController : MCBrowserViewControllerDelegate{
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {

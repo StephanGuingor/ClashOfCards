@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="Impacted.ttf">
+        <array key="impact.ttf">
             <string>Impact</string>
         </array>
     </customFonts>
@@ -195,6 +195,7 @@
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qzv-uH-Z1G">
                                 <rect key="frame" x="185" y="106" width="44" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <state key="normal" title="Check"/>
                                 <connections>
                                     <action selector="checkConnectedPeers:" destination="w7q-ch-gyt" eventType="touchUpInside" id="UUt-fW-zfN"/>
@@ -235,6 +236,66 @@
                                     </label>
                                 </subviews>
                             </stackView>
+                            <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XQH-qO-Ema" userLabel="Area4P1" customClass="newView" customModule="CoreDataNew" customModuleProvider="target">
+                                <rect key="frame" x="296" y="239.5" width="118" height="297"/>
+                                <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                        <color key="value" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M5W-sx-TGK" userLabel="Area4P2" customClass="newView" customModule="CoreDataNew" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="239.5" width="118" height="297"/>
+                                <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                        <color key="value" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iLV-8k-5kc" userLabel="Area4P3" customClass="newView" customModule="CoreDataNew" customModuleProvider="target">
+                                <rect key="frame" x="105" y="103" width="204" height="121"/>
+                                <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                        <color key="value" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -248,20 +309,29 @@
                             <constraint firstItem="e5e-r8-Pu1" firstAttribute="centerX" secondItem="oRX-fE-6wn" secondAttribute="centerX" id="7Lj-iE-S2Y"/>
                             <constraint firstItem="DRz-mq-1Nf" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="1.8" id="7fg-j5-UZF"/>
                             <constraint firstItem="ThC-xR-Hm2" firstAttribute="centerX" secondItem="e5e-r8-Pu1" secondAttribute="centerX" id="7qo-oZ-8VJ"/>
+                            <constraint firstItem="M5W-sx-TGK" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.367574" id="8AY-A9-GTf"/>
                             <constraint firstItem="ThC-xR-Hm2" firstAttribute="height" secondItem="e5e-r8-Pu1" secondAttribute="height" multiplier="0.6875" id="8hD-Fp-RaQ"/>
                             <constraint firstItem="XfJ-ff-Zmt" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.05" id="9cC-gS-CZn"/>
                             <constraint firstItem="oRX-fE-6wn" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="1.05" id="9pU-Oi-slA"/>
+                            <constraint firstItem="XQH-qO-Ema" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="0.96" id="AwR-y7-96P"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="centerX" secondItem="oRX-fE-6wn" secondAttribute="centerX" multiplier="1.7" id="CuL-Gh-REG"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="centerY" secondItem="oRX-fE-6wn" secondAttribute="centerY" multiplier="0.9" id="D1D-ev-RX3"/>
+                            <constraint firstItem="M5W-sx-TGK" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="0.96" id="GWr-Jz-cBc"/>
+                            <constraint firstItem="iLV-8k-5kc" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.492754" id="GrV-wg-7r9"/>
+                            <constraint firstItem="iLV-8k-5kc" firstAttribute="bottom" secondItem="GaL-MT-ptE" secondAttribute="bottom" constant="8" id="IRe-bE-3Ag"/>
                             <constraint firstItem="qzv-uH-Z1G" firstAttribute="centerX" secondItem="pZP-GG-Tne" secondAttribute="centerX" id="Jfc-SB-Tvu"/>
+                            <constraint firstItem="pZP-GG-Tne" firstAttribute="trailing" secondItem="XQH-qO-Ema" secondAttribute="trailing" id="KM3-ie-kAv"/>
                             <constraint firstItem="qzv-uH-Z1G" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.10628" id="Kuj-rw-gDh"/>
+                            <constraint firstItem="iLV-8k-5kc" firstAttribute="centerX" secondItem="pZP-GG-Tne" secondAttribute="centerX" id="MPp-o1-F6i"/>
                             <constraint firstItem="DRz-mq-1Nf" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.335749" id="NfC-hW-gYW"/>
                             <constraint firstItem="DRz-mq-1Nf" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.0618812" id="QCJ-0S-tq1"/>
                             <constraint firstItem="GaL-MT-ptE" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.137681" id="RQo-mN-6VO"/>
+                            <constraint firstItem="XQH-qO-Ema" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.285024" id="SNF-oq-RNa"/>
                             <constraint firstItem="pZP-GG-Tne" firstAttribute="trailing" secondItem="7Fl-Fr-faI" secondAttribute="trailing" id="WOx-iG-gaV"/>
                             <constraint firstItem="7Fl-Fr-faI" firstAttribute="leading" secondItem="pZP-GG-Tne" secondAttribute="leading" id="Zqc-kj-GIr"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="width" secondItem="oRX-fE-6wn" secondAttribute="width" multiplier="0.21123" id="bAj-5G-b8t"/>
                             <constraint firstItem="GaL-MT-ptE" firstAttribute="centerX" secondItem="pZP-GG-Tne" secondAttribute="centerX" id="bFK-3J-ES1"/>
+                            <constraint firstItem="M5W-sx-TGK" firstAttribute="width" secondItem="pZP-GG-Tne" secondAttribute="width" multiplier="0.285024" id="bbH-d4-Oue"/>
                             <constraint firstItem="XfJ-ff-Zmt" firstAttribute="top" secondItem="pZP-GG-Tne" secondAttribute="top" constant="5" id="dXT-MV-1Tm"/>
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="centerX" secondItem="oRX-fE-6wn" secondAttribute="centerX" multiplier="0.3" id="fYb-SX-K9E"/>
                             <constraint firstItem="e5e-r8-Pu1" firstAttribute="centerY" secondItem="oRX-fE-6wn" secondAttribute="centerY" multiplier="0.9" id="gMD-pU-0WW"/>
@@ -271,12 +341,15 @@
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="centerY" secondItem="oRX-fE-6wn" secondAttribute="centerY" multiplier="0.9" id="hLl-PY-HsQ"/>
                             <constraint firstItem="pZP-GG-Tne" firstAttribute="bottom" secondItem="7Fl-Fr-faI" secondAttribute="bottom" id="hgf-xj-lsh"/>
                             <constraint firstItem="Uon-Rh-e9p" firstAttribute="height" secondItem="oRX-fE-6wn" secondAttribute="height" multiplier="0.266833" id="k7u-sF-rdQ"/>
+                            <constraint firstItem="M5W-sx-TGK" firstAttribute="leading" secondItem="pZP-GG-Tne" secondAttribute="leading" id="lCA-P8-Qe2"/>
                             <constraint firstItem="ThC-xR-Hm2" firstAttribute="width" secondItem="e5e-r8-Pu1" secondAttribute="width" multiplier="0.675" id="lDG-px-CvA"/>
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="height" secondItem="oRX-fE-6wn" secondAttribute="height" multiplier="0.254364" id="lfK-Va-7Pl"/>
+                            <constraint firstItem="iLV-8k-5kc" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.149752" id="mhz-Rd-pNe"/>
                             <constraint firstItem="7Fl-Fr-faI" firstAttribute="top" secondItem="pZP-GG-Tne" secondAttribute="top" id="oRd-hh-1gk"/>
                             <constraint firstItem="GaL-MT-ptE" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.0330073" id="pSm-1g-hwF"/>
                             <constraint firstItem="XfJ-ff-Zmt" firstAttribute="leading" secondItem="pZP-GG-Tne" secondAttribute="leading" constant="5" id="rrJ-UY-k52"/>
                             <constraint firstItem="b5p-ws-WUL" firstAttribute="width" secondItem="oRX-fE-6wn" secondAttribute="width" multiplier="0.21123" id="siU-4J-ION"/>
+                            <constraint firstItem="XQH-qO-Ema" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.367574" id="v5x-37-bj2"/>
                             <constraint firstItem="qzv-uH-Z1G" firstAttribute="height" secondItem="pZP-GG-Tne" secondAttribute="height" multiplier="0.0371287" id="zXs-dN-FTX"/>
                             <constraint firstItem="qzv-uH-Z1G" firstAttribute="centerY" secondItem="pZP-GG-Tne" secondAttribute="centerY" multiplier="0.3" id="zlc-Nh-XU6"/>
                         </constraints>
@@ -286,6 +359,9 @@
                     <connections>
                         <outlet property="gameIsLiveLabel" destination="34W-VC-Xba" id="Q24-fV-kjU"/>
                         <outlet property="gameIsLiveView" destination="NdR-sf-U4n" id="gTK-aI-d10"/>
+                        <outlet property="player1BoundsView" destination="M5W-sx-TGK" id="uPL-Fy-1JF"/>
+                        <outlet property="player2BoundsView" destination="XQH-qO-Ema" id="OIi-xj-w8s"/>
+                        <outlet property="player3BoundsView" destination="iLV-8k-5kc" id="94L-Vd-bHQ"/>
                         <outlet property="readyUpButton" destination="DRz-mq-1Nf" id="gFH-uG-rEg"/>
                     </connections>
                 </viewController>

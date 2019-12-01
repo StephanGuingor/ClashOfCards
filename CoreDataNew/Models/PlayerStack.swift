@@ -16,5 +16,17 @@ class PlayerStack : Stack<Cards>{
         }
         push(value: tmp)
     }
+    
+    func pop(card: Cards) -> Cards{
+        
+        guard let atIdx = listStack.firstIndex(of: card) else{
+            print("Card was not found")
+            return listStack.first!
+        }
+       
+        let tmp = listStack[atIdx]
+        listStack.remove(at: atIdx)
+        return tmp
+    }
 
 }

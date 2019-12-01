@@ -7,47 +7,63 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DFE7BB1B-4A48-4326-83FD-C91F4786299E"
+            uuid = "E0EC4B6F-5758-4F4E-8DD2-17173C469E87"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CoreDataNew/Views/AnimatedCard.swift"
+            filePath = "CoreDataNew/Extensions/UIViewExtensionBorders.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
-            landmarkName = "addElixirCost(view:)"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "setLabelAndImage(imageIn:text:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "69AD3E68-43AB-4003-A3FD-5CCCD2D4F69A"
+            uuid = "DAD1EE46-755C-44BA-B12F-BA4DB3428381"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CoreDataNew/Views/AnimatedCard.swift"
+            filePath = "CoreDataNew/Controllers/GameViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "211"
-            endingLineNumber = "211"
-            landmarkName = "addElixirCost(view:)"
+            startingLineNumber = "334"
+            endingLineNumber = "334"
+            landmarkName = "setTargetPlayers()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C36BA020-5A1A-44E5-9DE6-C663A178FBF2"
+            uuid = "6C2BCB1C-DAA2-4231-BD42-DBE88365D213"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CoreDataNew/Controllers/GameViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "488"
+            endingLineNumber = "488"
+            landmarkName = "recievedDataNotification(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3DD47FE9-3301-4EAF-A6AE-951888BF1579"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CoreDataNew/Views/AnimatedCard.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "animationOnPan(_:)"
             landmarkType = "7">
          </BreakpointContent>

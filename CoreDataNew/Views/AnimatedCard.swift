@@ -22,9 +22,10 @@ class AnimatedCard: UIImageView {
     var elxImg:UIImageView = UIImageView(image: UIImage(named:"elixirDrop"))
     var elixirCardIdx:Int!
     var parent: GameViewController!
-   
+    var readyToSend:Bool = false
+    var targetPlayer:newView?
     
-    
+  
     
     //    let elixirImage = UIImageView(image: UIImage(named:"elixirDrop"))
     ///designated initializer
@@ -40,6 +41,7 @@ class AnimatedCard: UIImageView {
         self.elixirCost = elixirCost
         self.elixirCardIdx = elxCardIdx
         self.parent = parent
+        
     }
     
     required init?(coder: NSCoder) {
@@ -66,6 +68,7 @@ class AnimatedCard: UIImageView {
         
         
         addElixirCost(view: viewC as! GameViewController)
+    
         
     }
     
@@ -78,50 +81,66 @@ class AnimatedCard: UIImageView {
         //            return
         //        }
         
+        
+        
+        switch gesture.state {
+        case .began:
+            print("Began")
+        case .changed:
+            //                print("Chaged")
+            let translation = gesture.translation(in: self)
             
+            let viewToSend = superview?.subviews.filter({ (v) -> Bool in
+                return v is newView && v.frame.intersects(self.frame)
+            })
             
-            switch gesture.state {
-            case .began:
-                print("Began")
-            case .changed:
-//                print("Chaged")
-                let translation = gesture.translation(in: self)
-               
-                let viewToSend = superview?.subviews.filter({ (v) -> Bool in
-                    return v is newView && v.frame.intersects(self.frame)
-                })
-               
-                if viewToSend?.first != nil{
-                    if viewToSend!.first!.frame.contains(gesture.location(in: parent.view)) {
-                        print("ahuevoputo")
-                    }
+            if viewToSend?.first != nil{
+                if viewToSend!.first!.frame.contains(gesture.location(in: parent.view)) {
+                    print("containing")
+                    readyToSend = true
+                    targetPlayer = viewToSend!.first! as? newView
+                }else{
+                    readyToSend = false
                 }
+            }
+            
+            //
+            self.transform = CGAffineTransform(translationX:translation.x, y: translation.y)
+        case .ended:
+            var tPlayerValue = 10
+            if let target = targetPlayer?.targetPlayer {
+                tPlayerValue = targetPlayer!.targetPlayer!.playerIdx
+               print(target)
+            }
+           
                 
-//                gesture.location(in: viewToSend!.first!)
-                //                    .first!.bounds.contains(translation){
-//                    print("fuck yes, send it")
-//                }
-                
-//                self.frame.origin = translation
-                self.transform = CGAffineTransform(translationX:translation.x, y: translation.y)
-            case .ended:
-                
+           
+           
+           
+            if parent.listOfPlayers.count >= tPlayerValue + 1 && readyToSend{
+                sendInformationToTargetPlayer(view: targetPlayer!)
+                UIView.animate(withDuration: 0.3) {
+                    self.transform = CGAffineTransform(scaleX: 0, y: 0)
+                }
+            }
+            else{
                 UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .curveEaseIn, animations: {
                     print("animation")
-                   
+                    
                     self.transform = .identity
-                   
+                    
                 }) { (finished) in
                     if finished{
                         print("it really did finished")
                     }
                 }
-            default:
-                break
             }
+        default:
+            break
+        }
         
     }
-    
+   
     ///if card becomes active then it will change the gameViewController value. DEBUG
     func ifAnimationUpdateSelectedPlayer(card:inout AnimatedCard){
         card = self
@@ -367,6 +386,36 @@ class AnimatedCard: UIImageView {
         CATransaction.commit()
         
         
-     
+        
+    }
+    //MARK:Sending Information
+    
+    ///Sends id name to the other player along with the modifier, target peer, or atack true
+    ///- Parameters:
+    ///     - view: In order to obtain the target player idx
+    func sendInformationToTargetPlayer(view: newView){
+        
+        
+        let cardRemoved = parent!.listOfPlayers[parent!.playerIndex!]
+            .playerStack
+            .pop(card: parent!.dictionaryOfCards[idName]!)
+        print(cardRemoved)
+        removeFromSuperview()
+        ///the target cant be yourself
+        let target =  view.targetPlayer!.playerIdx
+        let message = dataToJSON(name: parent!.appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: false, cardIDs: [idName], targetPeer: target,sendingIndexes: nil, idxAndNames: nil, sendingCards: false)
+        
+        let msgData = parent!.encodeToJSON(message)
+        
+        
+        do{
+            ///Encoded object will be sent to every player
+            try parent!.appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: parent!.appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
+            
+        }catch{
+            print("Error in sendState \n \(error.localizedDescription)")
+        }
+        
+        
     }
 }

@@ -20,6 +20,7 @@ class GameViewController: UIViewController {
     //    var mcSession: MCSession!
     //    var mcAdvertiserAssistant: MCAdvertiserAssistant!
     
+    @IBOutlet weak var checkDebugWhoIsConnected: UIButton!
     ///Manages the state of the game, if its set to true it means that the game is currently or about to be executed
     var playerIsReady:Bool = false
     
@@ -45,10 +46,16 @@ class GameViewController: UIViewController {
     //in order to map index value and peers
 //Player Bounds
     @IBOutlet weak var player1BoundsView: newView!
+    @IBOutlet weak var imagePlayer1: UIImageView!
+    @IBOutlet weak var player1Label: UILabel!
     
     @IBOutlet weak var player2BoundsView: newView!
+    @IBOutlet weak var imagePlayer2: UIImageView!
+    @IBOutlet weak var player2Label: UILabel!
     
     @IBOutlet weak var player3BoundsView: newView!
+    @IBOutlet weak var imagePlayer3: UIImageView!
+    @IBOutlet weak var player3Label: UILabel!
     
     
     //MARK: GS Getting Ready - Variables
@@ -80,6 +87,12 @@ class GameViewController: UIViewController {
     var selectedAnimatedCard = AnimatedCard(image: nil)
     ///Manages the index for elixir drop
     var elixirDropIdx:Int!
+    
+    @IBOutlet weak var healthImageView: UIImageView!
+    
+    @IBOutlet weak var playerHealth: UILabel!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         UserDefaults.standard.set(56, forKey: "score")
@@ -87,11 +100,12 @@ class GameViewController: UIViewController {
         print(getVar)
         
         //ReadyUpButtonSetUp
-        
+         checkDebugWhoIsConnected.isHidden = true
         setUpCircleView(Color.red,Color.red)
         
         
         settingTheButton()
+        healthImageView.layer.applySketchShadow(color: .black, alpha: 0.5, x: 2, y: 1, blur: 1, spread: 2)
         
         //Initial set up
         appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -283,7 +297,7 @@ class GameViewController: UIViewController {
             return Player(peerID: peerID, index: index)
         }
     }
-    ///Initial serve to players, everyone will recieve five cards, Only executed by host
+    ///Initial serve to players, everyone will recieve five cards, Only executed by host, and creates players.
     func serveCardsToPlayers(){
         homeStack.shuffle()
         createPlayers()
@@ -320,12 +334,13 @@ class GameViewController: UIViewController {
         let dropZonesArray = [player1BoundsView,player2BoundsView,player3BoundsView]
         
         let otherPlayers = popCurrentDeviceFromListOfPlayers()
-        let numberOfPlayers = otherPlayers.count
+        let numberOfPlayers = otherPlayers.count - 1
 
         
         for i in 0 ... numberOfPlayers{
             ///This will set a peer to another view, this way the ui can get updated with player information. It adds them in an unordered way.
-            dropZonesArray[i]?.setTargetPeer(target: otherPlayers[i])
+        dropZonesArray[i]?.setTargetPeer(target: otherPlayers[i])
+            dropZonesArray[i]?.setLabelAndImage(imageIn: UIImage(named: "heart"), text: otherPlayers[i].peerID.displayName)
         }
     }
     
@@ -364,7 +379,7 @@ class GameViewController: UIViewController {
         }
     }
     
-    
+    //disables the selected card inside given view
     func checkPlayerStackAndSelectedCardToDisable(reset: Bool, retrieveSelected: Bool ){
         if playerIndex != nil{
         for card in animatedCardArray!{
@@ -464,9 +479,18 @@ class GameViewController: UIViewController {
         
         //MARK: GS Game Start - Data
         
+        
+        
         ifSendingIndexes(decodedData)
         
         serveToPlayerExceptHost(decodedData)
+        
+        if decodedData.targetPeer != -1{
+            print(decodedData.targetPeer)
+            if playerIndex == decodedData.targetPeer{
+                playerHealth.text = String(Int(playerHealth!.text ?? "50")! - dictionaryOfCards[decodedData.cardIDs[0]]!.elixirCost! )
+            }
+        }
         
         print("Data recieved")
         
@@ -483,7 +507,9 @@ class GameViewController: UIViewController {
                     .listStack
                     .append(dictionaryOfCards[i]!)
             }
+            setTargetPlayers()
             mapToAnimatedCardsAndServe()
+           
         }
         
         
@@ -586,6 +612,8 @@ class GameViewController: UIViewController {
             
             //TEST
             serveCardsToPlayers()
+            
+            setTargetPlayers()
             
             DispatchQueue.main.async {
                 self.mapToAnimatedCardsAndServe()

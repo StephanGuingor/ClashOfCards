@@ -21,7 +21,7 @@ class PlayerStack : Stack<Cards>{
         
         guard let atIdx = listStack.firstIndex(of: card) else{
             print("Card was not found")
-            return listStack.first!
+            return Cards()
         }
        
         let tmp = listStack[atIdx]

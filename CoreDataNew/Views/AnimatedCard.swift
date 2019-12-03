@@ -90,6 +90,10 @@ class AnimatedCard: UIImageView {
             //                print("Chaged")
             let translation = gesture.translation(in: self)
             
+            //only if the player is in his turn
+            if parent!.isTurnActive{
+                
+            
             let viewToSend = superview?.subviews.filter({ (v) -> Bool in
                 return v is newView && v.frame.intersects(self.frame)
             })
@@ -103,9 +107,11 @@ class AnimatedCard: UIImageView {
                     readyToSend = false
                 }
             }
-            
+            }
             //
             self.transform = CGAffineTransform(translationX:translation.x, y: translation.y)
+                
+                
         case .ended:
             var tPlayerValue = 10
             if let target = targetPlayer?.targetPlayer {
@@ -118,10 +124,15 @@ class AnimatedCard: UIImageView {
            
            
             if parent.listOfPlayers.count >= tPlayerValue + 1 && readyToSend{
+                ///will update turn, and will send a notification to other devices to update their turn as well
+                parent!.turnsStructure.updateTurn()
+                parent!.isTurnActive = false
+                
                 sendInformationToTargetPlayer(view: targetPlayer!)
                 UIView.animate(withDuration: 0.3) {
                     self.transform = CGAffineTransform(scaleX: 0, y: 0)
                 }
+                
             }
             else{
                 UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .curveEaseIn, animations: {
@@ -261,7 +272,7 @@ class AnimatedCard: UIImageView {
             NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: elxImg.layer.frame.size.width * 0.5).isActive = true
         
         NSLayoutConstraint(item: valueForElixir, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute:
-            NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant:  elxImg.layer.frame.size.width * 0.5).isActive = true
+            NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: elxImg.layer.frame.size.width * 0.5).isActive = true
         
         
         
@@ -401,6 +412,11 @@ class AnimatedCard: UIImageView {
             .pop(card: parent!.dictionaryOfCards[idName]!)
         print(cardRemoved)
         removeFromSuperview()
+        
+        
+        
+        
+//        delete(self)
         ///the target cant be yourself
         let target =  view.targetPlayer!.playerIdx
         let message = dataToJSON(name: parent!.appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: false, cardIDs: [idName], targetPeer: target,sendingIndexes: nil, idxAndNames: nil, sendingCards: false)
@@ -412,10 +428,11 @@ class AnimatedCard: UIImageView {
             ///Encoded object will be sent to every player
             try parent!.appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: parent!.appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
             
+            parent!.updateHealthForOtherPlayersInLocalUI(decodedData: nil, index: target, idName: idName)
+            
         }catch{
             print("Error in sendState \n \(error.localizedDescription)")
         }
-        
         
     }
 }

@@ -34,6 +34,7 @@
 		D4AC8EFD238F73A10054F863 /* UIViewExtensionBorders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AC8EFC238F73A10054F863 /* UIViewExtensionBorders.swift */; };
 		D4BBD0F5238888A400CC3DD9 /* sendingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */; };
 		D4C316AA2386268600E6E717 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C316A92386268600E6E717 /* NotificationHandler.swift */; };
+		D4FF34CC239631AC00C70466 /* turnosCircularList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FF34CB239631AC00C70466 /* turnosCircularList.swift */; };
 		F141B8BB6B1A6966950FF220 /* Pods_CoreDataNew.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2813141298911AD53891FBD9 /* Pods_CoreDataNew.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 		D4AC8EFC238F73A10054F863 /* UIViewExtensionBorders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionBorders.swift; sourceTree = "<group>"; };
 		D4BBD0F4238888A400CC3DD9 /* sendingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sendingDataModel.swift; sourceTree = "<group>"; };
 		D4C316A92386268600E6E717 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
+		D4FF34CB239631AC00C70466 /* turnosCircularList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = turnosCircularList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 				D4560D90237B0CE8004B92F2 /* CardEntity+CoreDataProperties.swift */,
 				D454619E2379F82300466D70 /* ClashRoyaleCards.swift */,
 				D421C8FE237DEDD600BC1D12 /* Stack.swift */,
+				D4FF34CB239631AC00C70466 /* turnosCircularList.swift */,
 				D45F1754238DA30B003DA94C /* PlayerModel.swift */,
 				D45F1752238DA2BE003DA94C /* PlayerStack.swift */,
 				D45F1750238DA278003DA94C /* HomeStack.swift */,
@@ -347,6 +350,7 @@
 				D4661210238B1001000D4C16 /* CircleGameLiveView.swift in Sources */,
 				D48419B02385C01000FC2298 /* Shadow.swift in Sources */,
 				D454617A2379B9F900466D70 /* AppDelegate.swift in Sources */,
+				D4FF34CC239631AC00C70466 /* turnosCircularList.swift in Sources */,
 				D45F1753238DA2BE003DA94C /* PlayerStack.swift in Sources */,
 				D4560D91237B0CE8004B92F2 /* CardEntity+CoreDataClass.swift in Sources */,
 			);

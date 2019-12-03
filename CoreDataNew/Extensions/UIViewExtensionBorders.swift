@@ -55,10 +55,10 @@ class newView:UIView{
     }
     
     ///Will set the label and image
-    func setLabelAndImage(imageIn: UIImage?,text:String?){
-        let label = subviews.filter { (v) -> Bool in
+    func setLabelAndImage(imageIn: UIImage?,name:String?,health:String?){
+        let labelName = subviews.filter { (v) -> Bool in
             let v1 = v as? UILabel
-            if v1 != nil{
+            if v1 != nil && v1?.tag == 2{
                 return true
             }
             return false
@@ -70,14 +70,35 @@ class newView:UIView{
                   }
                   return false
               }
-        
+       let healthLabel = subviews.filter { (v) -> Bool in
+            let v1 = v as? UILabel
+            if v1 != nil && v1?.tag == 3{
+                return true
+            }
+            return false
+        }
         let rImage = image.first as! UIImageView
         rImage.image = imageIn ?? im
        
        
-        let rLabel = label.first as! UILabel
-        rLabel.text = text ?? "Empty"
+        let rLabel = labelName.first as! UILabel
+        rLabel.text = name ?? "Empty"
         
+        let rhealthLabel = healthLabel.first as! UILabel
+        rhealthLabel.text = health ?? ""
      
     }
+    
+    func updateHealth(value:Int){
+        let healthLabel = subviews.filter { (v) -> Bool in
+            let v1 = v as? UILabel
+            if v1 != nil && v1?.tag == 3{
+                return true
+            }
+            return false
+        }
+        let rhealthLabel = healthLabel.first as! UILabel
+        rhealthLabel.text = String(Int(rhealthLabel.text ?? "50")! - value)
+    }
+    
 }

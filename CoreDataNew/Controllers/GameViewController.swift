@@ -48,14 +48,17 @@ class GameViewController: UIViewController {
     @IBOutlet weak var player1BoundsView: newView!
     @IBOutlet weak var imagePlayer1: UIImageView!
     @IBOutlet weak var player1Label: UILabel!
+    @IBOutlet weak var healthLabelP1: UILabel!
     
     @IBOutlet weak var player2BoundsView: newView!
     @IBOutlet weak var imagePlayer2: UIImageView!
     @IBOutlet weak var player2Label: UILabel!
+    @IBOutlet weak var healthLabelP2: UILabel!
     
     @IBOutlet weak var player3BoundsView: newView!
     @IBOutlet weak var imagePlayer3: UIImageView!
     @IBOutlet weak var player3Label: UILabel!
+    @IBOutlet weak var healthLabelP3: UILabel!
     
     
     //MARK: GS Getting Ready - Variables
@@ -87,11 +90,18 @@ class GameViewController: UIViewController {
     var selectedAnimatedCard = AnimatedCard(image: nil)
     ///Manages the index for elixir drop
     var elixirDropIdx:Int!
+    ///List of the available drop zones, new views
+    var dropZonesView:[newView] = []
     
     @IBOutlet weak var healthImageView: UIImageView!
     
     @IBOutlet weak var playerHealth: UILabel!
     
+    //MARK:Turns
+    ///Structure that will handle turns in game
+    let turnsStructure = CircularLinkedList()
+    ///Depending on the state, the player will be able to interact with his cards
+    var isTurnActive = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,7 +110,7 @@ class GameViewController: UIViewController {
         print(getVar)
         
         //ReadyUpButtonSetUp
-         checkDebugWhoIsConnected.isHidden = true
+//         checkDebugWhoIsConnected.isHidden = true DEBUG
         setUpCircleView(Color.red,Color.red)
         
         
@@ -310,6 +320,8 @@ class GameViewController: UIViewController {
             }
         }
         
+        populateCircularLinkedList() //for turn managment
+        firstTurn() //sets host to have first turn
     }
     
     ///This will map all the cards to a dictionary that can be accesed via the id name
@@ -330,7 +342,62 @@ class GameViewController: UIViewController {
         }
     }
     
+    ///when player has two cards left, he will recieve more cards
+    func serveIfEmpty(){
+        
+        if listOfPlayers[playerIndex!].playerStack.listStack.count <= 0 && playerIndex! == 0{
+            for _ in 0 ..< 5{
+                homeStack.serve(player: listOfPlayers[playerIndex!])
+                         
+                     }
+                
+           
+                let cardsToServe = listOfPlayers[playerIndex!].playerStack.listStack
+                elixirDropIdx = -1
+                animatedCardArray = cardsToServe.map { (Card) -> AnimatedCard in
+                    do{
+                        let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
+                        elixirDropIdx += 1
+                        return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
+                    }catch{
+                        print("Cant convert data")
+                        return AnimatedCard(image: nil)
+                    }
+                
+            }
+               
+                var idx = 0
+            
+                for card in animatedCardArray!{
+                    DispatchQueue.main.async {
+                        card.startingPosition(viewC: self)
+                        card.layer.zPosition = 0
+                        card.serve(indexCard: &idx, viewC: self)
+                        idx += 1
+                        
+                    }
+                }
+        }
+    }
+    
+    func retrieveListOfIndexes() -> [Int]{
+        return [1]
+    }
+    ///sets initial values for display of other devices stats.
     func setTargetPlayers(){
+        
+        retrieveDropZonesAvailable()
+        let otherPlayers = popCurrentDeviceFromListOfPlayers()
+        
+        for i in 0 ... dropZonesView.count - 1{
+            ///This will set a peer to another view, this way the ui can get updated with player information. It adds them in an unordered way.
+        dropZonesView[i].setTargetPeer(target: otherPlayers[i])
+            dropZonesView[i].setLabelAndImage(imageIn: UIImage(named: "heart"), name: otherPlayers[i].peerID.displayName,health: "50")
+        }
+    }
+    
+    ///populates dropZonesView, in order to keep track of available zones
+    func retrieveDropZonesAvailable(){
         let dropZonesArray = [player1BoundsView,player2BoundsView,player3BoundsView]
         
         let otherPlayers = popCurrentDeviceFromListOfPlayers()
@@ -338,12 +405,21 @@ class GameViewController: UIViewController {
 
         
         for i in 0 ... numberOfPlayers{
-            ///This will set a peer to another view, this way the ui can get updated with player information. It adds them in an unordered way.
-        dropZonesArray[i]?.setTargetPeer(target: otherPlayers[i])
-            dropZonesArray[i]?.setLabelAndImage(imageIn: UIImage(named: "heart"), text: otherPlayers[i].peerID.displayName)
+            ///This will set the available dropZones
+            dropZonesView.append(dropZonesArray[i]!)
         }
     }
     
+    ///retrieves view that link to player index
+    func comparesIndexWithDropZone(index:Int) -> newView{
+        for i in dropZonesView{
+            if i.targetPlayer?.playerIdx == index{
+                return i
+            }
+        }
+        print("view was not found")
+        return newView()
+    }
     func popCurrentDeviceFromListOfPlayers() -> [Player]{
         return listOfPlayers.filter { (ply) -> Bool in
             return ply.peerID != appDelegate?.mpcHandler.mcSession.myPeerID
@@ -365,9 +441,9 @@ class GameViewController: UIViewController {
                 return AnimatedCard(image: nil)
             }
         }
-        //FIXME:LAYER
+       
         var idx = 0
-//        let order = [-2,-3,-4,-1,0]
+    
         for card in animatedCardArray!{
             DispatchQueue.main.async {
                 card.startingPosition(viewC: self)
@@ -409,7 +485,9 @@ class GameViewController: UIViewController {
         
         let cardsToSend = retrieveCardIDS(playerIdx: player.playerIdx)
         
-        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: false, cardIDs: cardsToSend, targetPeer: nil,sendingIndexes: nil, idxAndNames: nil, sendingCards: true)
+        
+        ///will send player to serve
+        let message = dataToJSON(name: appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: player.playerIdx, ready: false, cardIDs: cardsToSend, targetPeer: nil,sendingIndexes: nil, idxAndNames: nil, sendingCards: true)
         
         let msgData = encodeToJSON(message)
         
@@ -486,19 +564,44 @@ class GameViewController: UIViewController {
         serveToPlayerExceptHost(decodedData)
         
         if decodedData.targetPeer != -1{
+            turnsStructure.updateTurn()
+            
+            checkIfPlayerTurn()
+            
+            
             print(decodedData.targetPeer)
+            ///Will update the health that the device has.
             if playerIndex == decodedData.targetPeer{
                 playerHealth.text = String(Int(playerHealth!.text ?? "50")! - dictionaryOfCards[decodedData.cardIDs[0]]!.elixirCost! )
+                ///Will update health labels for other players in current device.
+            }else{
+                
+               updateHealthForOtherPlayersInLocalUI(decodedData: decodedData,index: nil,idName: nil)
+                
             }
         }
         
         print("Data recieved")
         
     }
-    
+    func updateHealthForOtherPlayersInLocalUI(decodedData:dtJson?,index:Int?,idName:String?){
+        if decodedData != nil{
+            let view = comparesIndexWithDropZone(index: decodedData!.targetPeer)
+                           
+            ///will update matching labels for the device that got atacked
+            view.updateHealth(value: dictionaryOfCards[decodedData!.cardIDs[0]]!.elixirCost!)
+        }else{
+            let view = comparesIndexWithDropZone(index: index!)
+                           
+            ///will update matching labels for the device that got atacked
+            view.updateHealth(value: dictionaryOfCards[idName!]!.elixirCost!)
+        }
+        
+    }
     ///If host sent cards then players will recieve their cards with their respective animation.
     func serveToPlayerExceptHost(_ decodedData: dtJson){
         if decodedData.sendingCards == true{
+            if decodedData.index == playerIndex!{ //maybe
             createPlayers()
             
             for i in decodedData.cardIDs{
@@ -509,9 +612,11 @@ class GameViewController: UIViewController {
             }
             setTargetPlayers()
             mapToAnimatedCardsAndServe()
+                
+            populateCircularLinkedList()
            
         }
-        
+        }
         
     }
     
@@ -566,6 +671,29 @@ class GameViewController: UIViewController {
         //        readyUpButton.setAttributedTitle(NSAttributedString(string: recievedString!, attributes: fontAttributes), for: .normal) - debug
     }
     
+    //MARK: Turns
+    
+    ///uses player indexes to populate circular linked list
+    func populateCircularLinkedList(){
+        turnsStructure.addToEmptyList(data: 0)
+        for i in 1 ..< listOfPlayers.count{
+            turnsStructure.addToListEnd(data: i)
+        }
+    }
+    
+    ///it will be called in order to start the turn sequence, turn ends when card is dropped
+    func firstTurn(){
+        if playerIndex == 0{
+            isTurnActive = true
+        }
+    }
+    
+    ///Will keep track of turns for all devices, lets user atack if it is his turn.
+    func checkIfPlayerTurn(){
+        if turnsStructure.retrieveTurn() == playerIndex{
+            isTurnActive = true
+        }
+    }
     
     //MARK: CHANGED STATE NOTIFICATION
     ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
@@ -729,7 +857,6 @@ extension GameViewController : MCBrowserViewControllerDelegate{
             print("canceled from the handler")
         }
     }
-    
     
     
 }

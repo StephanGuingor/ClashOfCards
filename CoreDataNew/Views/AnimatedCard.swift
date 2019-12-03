@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Macaw
 
 @IBDesignable
 class AnimatedCard: UIImageView {
@@ -127,6 +128,7 @@ class AnimatedCard: UIImageView {
                 ///will update turn, and will send a notification to other devices to update their turn as well
                 parent!.turnsStructure.updateTurn()
                 parent!.isTurnActive = false
+                parent!.setUpCircleView(Color.yellow, Color.yellow)
                 
                 sendInformationToTargetPlayer(view: targetPlayer!)
                 UIView.animate(withDuration: 0.3) {

@@ -275,7 +275,7 @@ class GameViewController: UIViewController {
     ///Function that will change label to playing, and circle to green only when everyone is ready. And remove ready up button
     func updateViewToStartGame(){
         gameIsLiveLabel.text = "Playing..."
-        setUpCircleView(Color.green, Color.green)
+        setUpCircleView(Color.yellow, Color.yellow)
         removeButton()
     }
     
@@ -686,12 +686,15 @@ class GameViewController: UIViewController {
         if playerIndex == 0{
             isTurnActive = true
         }
+        
+        setUpCircleView(Color.green,Color.green)
     }
     
     ///Will keep track of turns for all devices, lets user atack if it is his turn.
     func checkIfPlayerTurn(){
         if turnsStructure.retrieveTurn() == playerIndex{
             isTurnActive = true
+            setUpCircleView(Color.green, Color.green)
         }
     }
     

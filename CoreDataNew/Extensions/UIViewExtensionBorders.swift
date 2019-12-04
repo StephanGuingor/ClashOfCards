@@ -88,8 +88,19 @@ class newView:UIView{
         rhealthLabel.text = health ?? ""
      
     }
-    
-    func updateHealth(value:Int){
+    func deadImage(){
+        let image = subviews.filter { (v) -> Bool in
+            let v1 = v as? UIImageView
+            if v1 != nil{
+                return true
+            }
+            return false
+        }
+        let rImage = image.first as! UIImageView
+               rImage.image = im
+    }
+   
+    func updateHealth(value:Int,parent:GameViewController){
         let healthLabel = subviews.filter { (v) -> Bool in
             let v1 = v as? UILabel
             if v1 != nil && v1?.tag == 3{
@@ -99,6 +110,14 @@ class newView:UIView{
         }
         let rhealthLabel = healthLabel.first as! UILabel
         rhealthLabel.text = String(Int(rhealthLabel.text ?? "50")! - value)
+        
+        //Will remove from the game any player that get below or to 0 hitpoints
+        if Int(rhealthLabel.text!)! <= 0{
+            parent.turnsStructure.popItem(data: targetPlayer!.playerIdx)
+            rhealthLabel.isHidden = true
+            deadImage()
+            
+        }
     }
     
 }

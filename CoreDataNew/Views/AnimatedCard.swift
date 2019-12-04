@@ -125,10 +125,9 @@ class AnimatedCard: UIImageView {
            
            
             if parent.listOfPlayers.count >= tPlayerValue + 1 && readyToSend{
-                ///will update turn, and will send a notification to other devices to update their turn as well
-                parent!.turnsStructure.updateTurn()
-                parent!.isTurnActive = false
-                parent!.setUpCircleView(Color.yellow, Color.yellow)
+                
+                
+            
                 
                 sendInformationToTargetPlayer(view: targetPlayer!)
                 UIView.animate(withDuration: 0.3) {
@@ -421,6 +420,17 @@ class AnimatedCard: UIImageView {
 //        delete(self)
         ///the target cant be yourself
         let target =  view.targetPlayer!.playerIdx
+        
+        //Will update the turns and pop whatever player dies.
+      
+       ///will update turn, and will send a notification to other devices to update their turn as well
+        parent.updateHealthForOtherPlayersInLocalUI(decodedData: nil, index: target, idName: idName)
+        
+        parent!.turnsStructure.updateTurn()
+        parent!.isTurnActive = false
+        parent!.setUpCircleView(Color.yellow,
+                                      Color.yellow)
+        
         let message = dataToJSON(name: parent!.appDelegate?.mpcHandler.mcSession.myPeerID.displayName ?? "No-Name", index: -1, ready: false, cardIDs: [idName], targetPeer: target,sendingIndexes: nil, idxAndNames: nil, sendingCards: false)
         
         let msgData = parent!.encodeToJSON(message)
@@ -430,7 +440,7 @@ class AnimatedCard: UIImageView {
             ///Encoded object will be sent to every player
             try parent!.appDelegate!.mpcHandler.mcSession.send(msgData, toPeers: parent!.appDelegate!.mpcHandler.mcSession.connectedPeers, with: .unreliable)
             
-            parent!.updateHealthForOtherPlayersInLocalUI(decodedData: nil, index: target, idName: idName)
+            
             
         }catch{
             print("Error in sendState \n \(error.localizedDescription)")

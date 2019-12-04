@@ -75,7 +75,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5hP-qi-Egr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3759.420289855073" y="152.67857142857142"/>
+            <point key="canvasLocation" x="-2729" y="929"/>
         </scene>
         <!--Pop Up View Controller-->
         <scene sceneID="TUa-bS-h1W">
@@ -165,7 +165,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NZr-Bb-tbP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2725" y="171"/>
+            <point key="canvasLocation" x="-2728" y="171"/>
         </scene>
         <!--Game View Controller-->
         <scene sceneID="Zdk-PD-vCf">
@@ -619,6 +619,82 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KVV-FZ-B1P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1352.1739130434785" y="170.75892857142856"/>
+        </scene>
+        <!--End Game Controller-->
+        <scene sceneID="kHP-3g-1LB">
+            <objects>
+                <viewController storyboardIdentifier="popUp_end" id="7yt-ad-7Wc" userLabel="End Game Controller" customClass="EndGameViewController" customModule="CoreDataNew" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="VJW-s7-FGJ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view alpha="0.60000002384185791" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PcL-A5-blE">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pfG-K7-eUR">
+                                <rect key="frame" x="67.5" y="306.5" width="279" height="202"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vVd-dZ-NqJ">
+                                        <rect key="frame" x="36" y="116.5" width="207" height="50"/>
+                                        <color key="backgroundColor" red="0.27722615" green="0.58888250590000002" blue="0.51717525720000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="25"/>
+                                        <state key="normal" title="Quit">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="5"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="joinButton:" destination="7yt-ad-7Wc" eventType="touchUpInside" id="a2W-W3-x56"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You Won!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jTc-SP-62P">
+                                        <rect key="frame" x="60" y="10" width="159" height="64"/>
+                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="40"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.03634813428" green="0.1460377276" blue="0.20416039229999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="vVd-dZ-NqJ" firstAttribute="height" secondItem="pfG-K7-eUR" secondAttribute="height" multiplier="0.247525" id="1J3-Jc-yOZ"/>
+                                    <constraint firstItem="vVd-dZ-NqJ" firstAttribute="centerX" secondItem="pfG-K7-eUR" secondAttribute="centerX" id="FJc-kG-6xq"/>
+                                    <constraint firstItem="vVd-dZ-NqJ" firstAttribute="width" secondItem="pfG-K7-eUR" secondAttribute="width" multiplier="0.741935" id="WLA-T3-JoV"/>
+                                    <constraint firstItem="vVd-dZ-NqJ" firstAttribute="centerY" secondItem="pfG-K7-eUR" secondAttribute="centerY" multiplier="1.4" id="Yby-FY-qe2"/>
+                                    <constraint firstItem="jTc-SP-62P" firstAttribute="top" secondItem="pfG-K7-eUR" secondAttribute="top" constant="10" id="bfB-Xg-Ezk"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="pfG-K7-eUR" firstAttribute="centerX" secondItem="IxL-PW-lp6" secondAttribute="centerX" id="DfI-gH-kn6"/>
+                            <constraint firstItem="PcL-A5-blE" firstAttribute="centerY" secondItem="IxL-PW-lp6" secondAttribute="centerY" id="JHX-Ld-5wR"/>
+                            <constraint firstItem="PcL-A5-blE" firstAttribute="height" secondItem="IxL-PW-lp6" secondAttribute="height" id="Q22-fm-tSj"/>
+                            <constraint firstItem="jTc-SP-62P" firstAttribute="width" secondItem="IxL-PW-lp6" secondAttribute="width" multiplier="0.384058" id="Sze-Gj-k4h"/>
+                            <constraint firstItem="jTc-SP-62P" firstAttribute="height" secondItem="IxL-PW-lp6" secondAttribute="height" multiplier="0.0782396" id="Udi-Ph-dSr"/>
+                            <constraint firstItem="PcL-A5-blE" firstAttribute="centerX" secondItem="IxL-PW-lp6" secondAttribute="centerX" id="YA6-Ud-lYd"/>
+                            <constraint firstItem="jTc-SP-62P" firstAttribute="centerX" secondItem="IxL-PW-lp6" secondAttribute="centerX" id="aU6-wY-Ib8"/>
+                            <constraint firstItem="pfG-K7-eUR" firstAttribute="height" secondItem="IxL-PW-lp6" secondAttribute="height" multiplier="0.246944" id="dk7-3n-Qg5"/>
+                            <constraint firstItem="pfG-K7-eUR" firstAttribute="width" secondItem="IxL-PW-lp6" secondAttribute="width" multiplier="0.673913" id="gRM-pB-H2U"/>
+                            <constraint firstItem="pfG-K7-eUR" firstAttribute="centerY" secondItem="IxL-PW-lp6" secondAttribute="centerY" multiplier="0.9" id="iTh-6F-uE2"/>
+                            <constraint firstItem="PcL-A5-blE" firstAttribute="width" secondItem="IxL-PW-lp6" secondAttribute="width" id="wxx-jh-dcN"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="IxL-PW-lp6"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="MHk-82-nyT"/>
+                    <connections>
+                        <outlet property="backView" destination="pfG-K7-eUR" id="YQx-sT-zs9"/>
+                        <outlet property="joinButton" destination="vVd-dZ-NqJ" id="yYR-r2-Cvb"/>
+                        <outlet property="lastView" destination="PcL-A5-blE" id="Wla-22-NmF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wnz-En-TLN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-442" y="930"/>
         </scene>
     </scenes>
     <resources>

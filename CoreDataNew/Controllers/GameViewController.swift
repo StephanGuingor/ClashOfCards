@@ -44,7 +44,7 @@ class GameViewController: UIViewController {
     
     //MARK: Game Settings
     //in order to map index value and peers
-//Player Bounds
+    //Player Bounds
     @IBOutlet weak var player1BoundsView: newView!
     @IBOutlet weak var imagePlayer1: UIImageView!
     @IBOutlet weak var player1Label: UILabel!
@@ -110,7 +110,7 @@ class GameViewController: UIViewController {
         print(getVar)
         
         //ReadyUpButtonSetUp
-//         checkDebugWhoIsConnected.isHidden = true DEBUG
+        //         checkDebugWhoIsConnected.isHidden = true DEBUG
         setUpCircleView(Color.red,Color.red)
         
         
@@ -313,7 +313,7 @@ class GameViewController: UIViewController {
         createPlayers()
         
         for player in listOfPlayers{
-            for _ in 0 ..< 5{
+            for _ in 0 ..< 20{
                 
                 homeStack.serve(player: player)
                 
@@ -348,35 +348,35 @@ class GameViewController: UIViewController {
         if listOfPlayers[playerIndex!].playerStack.listStack.count <= 0 && playerIndex! == 0{
             for _ in 0 ..< 5{
                 homeStack.serve(player: listOfPlayers[playerIndex!])
-                         
-                     }
-                
-           
-                let cardsToServe = listOfPlayers[playerIndex!].playerStack.listStack
-                elixirDropIdx = -1
-                animatedCardArray = cardsToServe.map { (Card) -> AnimatedCard in
-                    do{
-                        let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
-                        elixirDropIdx += 1
-                        return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
-                    }catch{
-                        print("Cant convert data")
-                        return AnimatedCard(image: nil)
-                    }
                 
             }
-               
-                var idx = 0
             
-                for card in animatedCardArray!{
-                    DispatchQueue.main.async {
-                        card.startingPosition(viewC: self)
-                        card.layer.zPosition = 0
-                        card.serve(indexCard: &idx, viewC: self)
-                        idx += 1
-                        
-                    }
+            
+            let cardsToServe = listOfPlayers[playerIndex!].playerStack.listStack
+            elixirDropIdx = -1
+            animatedCardArray = cardsToServe.map { (Card) -> AnimatedCard in
+                do{
+                    let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
+                    elixirDropIdx += 1
+                    return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
+                }catch{
+                    print("Cant convert data")
+                    return AnimatedCard(image: nil)
                 }
+                
+            }
+            
+            var idx = 0
+            
+            for card in animatedCardArray!{
+                DispatchQueue.main.async {
+                    card.startingPosition(viewC: self)
+                    card.layer.zPosition = 0
+                    card.serve(indexCard: &idx, viewC: self)
+                    idx += 1
+                    
+                }
+            }
         }
     }
     
@@ -391,7 +391,7 @@ class GameViewController: UIViewController {
         
         for i in 0 ... dropZonesView.count - 1{
             ///This will set a peer to another view, this way the ui can get updated with player information. It adds them in an unordered way.
-        dropZonesView[i].setTargetPeer(target: otherPlayers[i])
+            dropZonesView[i].setTargetPeer(target: otherPlayers[i])
             dropZonesView[i].setLabelAndImage(imageIn: UIImage(named: "heart"), name: otherPlayers[i].peerID.displayName,health: "50")
         }
     }
@@ -402,7 +402,7 @@ class GameViewController: UIViewController {
         
         let otherPlayers = popCurrentDeviceFromListOfPlayers()
         let numberOfPlayers = otherPlayers.count - 1
-
+        
         
         for i in 0 ... numberOfPlayers{
             ///This will set the available dropZones
@@ -433,18 +433,22 @@ class GameViewController: UIViewController {
         elixirDropIdx = -1
         animatedCardArray = cardsToServe.map { (Card) -> AnimatedCard in
             do{
+                if cardsToServe.firstIndex(of: Card)! <= 4{
                 let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
                 elixirDropIdx += 1
                 return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
+                }
+                return AnimatedCard(image: nil)
             }catch{
                 print("Cant convert data")
                 return AnimatedCard(image: nil)
             }
         }
-       
+        
         var idx = 0
-    
-        for card in animatedCardArray!{
+        
+        for i in 0 ..< 5{
+            let card = animatedCardArray![i]
             DispatchQueue.main.async {
                 card.startingPosition(viewC: self)
                 card.layer.zPosition = 0
@@ -455,19 +459,33 @@ class GameViewController: UIViewController {
         }
     }
     
+    func serveCards(){
+        var idx = 0
+        
+        for i in 0 ..< 5{
+            let card = animatedCardArray![i]
+            DispatchQueue.main.async {
+                card.startingPosition(viewC: self)
+                card.layer.zPosition = 0
+                card.serve(indexCard: &idx, viewC: self)
+                idx += 1
+                
+            }
+        }
+    }
     //disables the selected card inside given view
     func checkPlayerStackAndSelectedCardToDisable(reset: Bool, retrieveSelected: Bool ){
         if playerIndex != nil{
-        for card in animatedCardArray!{
-            if reset{
-                if card.selectedCard{
-                card.reverseOnTapAnimation()
-                card.selectedCard = false
+            for card in animatedCardArray!{
+                if reset{
+                    if card.selectedCard{
+                        card.reverseOnTapAnimation()
+                        card.selectedCard = false
+                    }
+                    
+                    //I might call a back function for the animation
                 }
-                
-                //I might call a back function for the animation
             }
-        }
         }else{
             print("player index has not been set")
         }
@@ -564,21 +582,33 @@ class GameViewController: UIViewController {
         serveToPlayerExceptHost(decodedData)
         
         if decodedData.targetPeer != -1{
-            turnsStructure.updateTurn()
-            
-            checkIfPlayerTurn()
             
             
             print(decodedData.targetPeer)
             ///Will update the health that the device has.
             if playerIndex == decodedData.targetPeer{
                 playerHealth.text = String(Int(playerHealth!.text ?? "50")! - dictionaryOfCards[decodedData.cardIDs[0]]!.elixirCost! )
-                ///Will update health labels for other players in current device.
+                
+                //this will remove player from the game if his health get below 0
+                if Int(playerHealth!.text!)! <= 0{
+                    turnsStructure.popItem(data: playerIndex!)
+                }
+                
+                
+                
             }else{
                 
-               updateHealthForOtherPlayersInLocalUI(decodedData: decodedData,index: nil,idName: nil)
+                ///Will update health labels for other players in current device.
+                updateHealthForOtherPlayersInLocalUI(decodedData: decodedData,index: nil,idName: nil)
+                
                 
             }
+            
+            turnsStructure.updateTurn()
+            checkIfPlayerTurn()
+            
+            ///Checks player stack in order to hand more if needed
+            checkNumberOfCardsAndServe()
         }
         
         print("Data recieved")
@@ -587,14 +617,14 @@ class GameViewController: UIViewController {
     func updateHealthForOtherPlayersInLocalUI(decodedData:dtJson?,index:Int?,idName:String?){
         if decodedData != nil{
             let view = comparesIndexWithDropZone(index: decodedData!.targetPeer)
-                           
+            
             ///will update matching labels for the device that got atacked
-            view.updateHealth(value: dictionaryOfCards[decodedData!.cardIDs[0]]!.elixirCost!)
+            view.updateHealth(value: dictionaryOfCards[decodedData!.cardIDs[0]]!.elixirCost!, parent:self)
         }else{
             let view = comparesIndexWithDropZone(index: index!)
-                           
+            
             ///will update matching labels for the device that got atacked
-            view.updateHealth(value: dictionaryOfCards[idName!]!.elixirCost!)
+            view.updateHealth(value: dictionaryOfCards[idName!]!.elixirCost!, parent: self)
         }
         
     }
@@ -602,20 +632,20 @@ class GameViewController: UIViewController {
     func serveToPlayerExceptHost(_ decodedData: dtJson){
         if decodedData.sendingCards == true{
             if decodedData.index == playerIndex!{ //maybe
-            createPlayers()
-            
-            for i in decodedData.cardIDs{
-                listOfPlayers[playerIndex!]
-                    .playerStack
-                    .listStack
-                    .append(dictionaryOfCards[i]!)
-            }
-            setTargetPlayers()
-            mapToAnimatedCardsAndServe()
+                createPlayers()
                 
-            populateCircularLinkedList()
-           
-        }
+                for i in decodedData.cardIDs{
+                    listOfPlayers[playerIndex!]
+                        .playerStack
+                        .listStack
+                        .append(dictionaryOfCards[i]!)
+                }
+                setTargetPlayers()
+                mapToAnimatedCardsAndServe()
+                
+                populateCircularLinkedList()
+                
+            }
         }
         
     }
@@ -696,6 +726,26 @@ class GameViewController: UIViewController {
             isTurnActive = true
             setUpCircleView(Color.green, Color.green)
         }
+    }
+    //FIXME: NEED UPDATE
+    func checkNumberOfCardsAndServe(){
+        if listOfPlayers[playerIndex!].playerStack.listStack.count % 5 == 0 && listOfPlayers[playerIndex!].playerStack.listStack.count != 20{
+            
+            mapToAnimatedCardsAndServe()
+            
+        }
+    }
+    
+    //MARK:End Game
+    //FIXME: NEED UPDATE
+    ///If the player is the last alive, then a pop up will appear telling you that you won. And will give the option to either quit or play again
+    func checkIfLastAlive(){
+        
+    }
+    
+    ///This function will keep a W/L ratio, stored in the user defaults
+    func willSaveResultUserDefaults(){
+        
     }
     
     //MARK: CHANGED STATE NOTIFICATION

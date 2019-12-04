@@ -137,6 +137,10 @@ class GameViewController: UIViewController {
         
         ///This observer is in charge of handling change in state notifications, adn running desired function
         NotificationCenter.default.addObserver(self, selector: #selector(peerChangedStateNotification), name: NSNotification.Name(rawValue: "MPC_DidChangeStateNotification"), object: nil)
+        
+        
+        
+        checkIfLastAlive()
     }
     
     
@@ -592,6 +596,10 @@ class GameViewController: UIViewController {
                 //this will remove player from the game if his health get below 0
                 if Int(playerHealth!.text!)! <= 0{
                     turnsStructure.popItem(data: playerIndex!)
+                    
+                    healthImageView.image = UIImage(named: "cross")
+                    
+                    playerHealth.isHidden = true
                 }
                 
                 
@@ -740,7 +748,24 @@ class GameViewController: UIViewController {
     //FIXME: NEED UPDATE
     ///If the player is the last alive, then a pop up will appear telling you that you won. And will give the option to either quit or play again
     func checkIfLastAlive(){
+//        if turnsStructure.traverse() == 1 && listOfPlayers[turnsStructure.retrieveTurn()].peerID == appDelegate?.mpcHandler.mcSession.myPeerID{
+            
+            
+            let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end") as! EndGameViewController
         
+    
+        
+        navigationController?.present(popVC, animated: true, completion: nil)
+        
+//            self.addChild(popvc)
+//
+//            popvc.view.frame = self.view.frame
+//
+//            self.view.addSubview(popvc.view)
+//
+//            popvc.didMove(toParent: self)
+        
+//        }
     }
     
     ///This function will keep a W/L ratio, stored in the user defaults

@@ -80,15 +80,19 @@ class CircularLinkedList{
             }
         }
     }
-     func traverse(){
+    //And returns count
+     func traverse() -> Int{
+        var count = 0
             var currentNode = self.last?.next
             while (currentNode != nil){
                 print(currentNode!.data)
+                count += 1
                 currentNode = currentNode?.next
                 if currentNode == self.last?.next{
-                    break
+                    return count
                 }
         }
+        return 0
         }
     
     func retrieveTurn() -> Int{

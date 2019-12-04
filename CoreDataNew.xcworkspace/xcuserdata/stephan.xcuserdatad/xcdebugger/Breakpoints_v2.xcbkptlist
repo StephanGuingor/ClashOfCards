@@ -14,9 +14,9 @@
             filePath = "CoreDataNew/Controllers/GameViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "733"
-            endingLineNumber = "733"
-            landmarkName = "checkNumberOfCardsAndServe()"
+            startingLineNumber = "737"
+            endingLineNumber = "737"
+            landmarkName = "checkIfPlayerTurn()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -30,8 +30,8 @@
             filePath = "CoreDataNew/Controllers/GameViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "611"
-            endingLineNumber = "611"
+            startingLineNumber = "615"
+            endingLineNumber = "615"
             landmarkName = "recievedDataNotification(_:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -16,7 +16,7 @@ class popUpViewController: UIViewController {
     @IBOutlet weak var joinButton: UIButton!
     @IBOutlet weak var lastView: UIView!
     
-    
+    var shouldPop = false
     //Multipeer conectivity varibales
     
 //    var peerID: MCPeerID!
@@ -59,8 +59,11 @@ class popUpViewController: UIViewController {
                 let vc = segue.destination as! UINavigationController
                 let game = vc.viewControllers.first as? GameViewController
                 game?.join = true
+                
+                
             }
         if segue.identifier == "hostSID"{
+            
 
 //            let vc = segue.destination as! UINavigationController
 //            let game = vc.viewControllers.first as? GameViewController

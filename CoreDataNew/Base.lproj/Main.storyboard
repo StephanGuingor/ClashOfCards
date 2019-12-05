@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="Impacted.ttf">
+        <array key="unicode.impact.ttf">
             <string>Impact</string>
         </array>
     </customFonts>
@@ -76,7 +76,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5hP-qi-Egr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2729" y="929"/>
+            <point key="canvasLocation" x="-2729" y="851"/>
         </scene>
         <!--Pop Up View Controller-->
         <scene sceneID="TUa-bS-h1W">
@@ -476,7 +476,6 @@
                         <outlet property="player3Label" destination="XDD-eK-kaP" id="03L-ti-B1J"/>
                         <outlet property="playerHealth" destination="s7a-oT-2LX" id="49Q-jL-s2f"/>
                         <outlet property="readyUpButton" destination="DRz-mq-1Nf" id="gFH-uG-rEg"/>
-                        <segue destination="7yt-ad-7Wc" kind="show" id="VdR-1S-9V4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mQI-32-wQC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -625,20 +624,20 @@
         <!--End Game Controller-->
         <scene sceneID="kHP-3g-1LB">
             <objects>
-                <viewController storyboardIdentifier="popUp_end" modalPresentationStyle="fullScreen" id="7yt-ad-7Wc" userLabel="End Game Controller" customClass="EndGameViewController" customModule="CoreDataNew" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="popUp_end" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7yt-ad-7Wc" userLabel="End Game Controller" customClass="EndGameViewController" customModule="CoreDataNew" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VJW-s7-FGJ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.60000002384185791" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PcL-A5-blE">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pfG-K7-eUR">
-                                <rect key="frame" x="67.5" y="264" width="279" height="199.5"/>
+                                <rect key="frame" x="67.5" y="306.5" width="279" height="202"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vVd-dZ-NqJ">
-                                        <rect key="frame" x="36" y="115" width="207" height="49"/>
+                                        <rect key="frame" x="36" y="116.5" width="207" height="50"/>
                                         <color key="backgroundColor" red="0.27722615" green="0.58888250590000002" blue="0.51717525720000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="25"/>
                                         <state key="normal" title="Quit">
@@ -651,13 +650,13 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <action selector="joinButton:" destination="7yt-ad-7Wc" eventType="touchUpInside" id="a2W-W3-x56"/>
                                             <action selector="quitButton:" destination="7yt-ad-7Wc" eventType="touchUpInside" id="xzF-FD-pPk"/>
+                                            <segue destination="Igd-mA-NLu" kind="unwind" unwindAction="unwindToMain:" id="nuk-6y-jnp"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You Won!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jTc-SP-62P">
-                                        <rect key="frame" x="60" y="10" width="159" height="63"/>
-                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="40"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You Won!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jTc-SP-62P">
+                                        <rect key="frame" x="60" y="10" width="159" height="64"/>
+                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="35"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -691,15 +690,15 @@
                     <navigationItem key="navigationItem" id="MHk-82-nyT"/>
                     <connections>
                         <outlet property="backView" destination="pfG-K7-eUR" id="hBA-Wa-dxk"/>
-                        <outlet property="joinButton" destination="vVd-dZ-NqJ" id="yYR-r2-Cvb"/>
                         <outlet property="lastView" destination="PcL-A5-blE" id="5F9-dV-yg2"/>
                         <outlet property="quitButton" destination="vVd-dZ-NqJ" id="aot-jI-Nym"/>
                         <outlet property="winOrLoseLabel" destination="jTc-SP-62P" id="deP-Uf-7Bs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wnz-En-TLN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="Igd-mA-NLu" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="272" y="171"/>
+            <point key="canvasLocation" x="-442" y="851"/>
         </scene>
     </scenes>
     <resources>

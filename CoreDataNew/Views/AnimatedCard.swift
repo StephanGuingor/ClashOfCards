@@ -446,6 +446,6 @@ class AnimatedCard: UIImageView {
             print("Error in sendState \n \(error.localizedDescription)")
         }
         //Checks if the player has won
-//        parent!.checkIfLastAlive()
+        parent!.checkIfLastAlive()
     }
 }

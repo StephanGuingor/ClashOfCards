@@ -13,14 +13,14 @@ class MainViewController: UIViewController {
     @IBOutlet weak var playButton: UIButton!
     
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-      buttonSetUp()
+        buttonSetUp()
         
-//        self.view.addGestureRecognizer(tap)
+        //        self.view.addGestureRecognizer(tap)
         
     }
     @IBAction func showOptions(){
@@ -31,26 +31,45 @@ class MainViewController: UIViewController {
         
         popvc.view.frame = self.view.frame
         
+        //default value in order to pop it later
+        popvc.view.tag = 5
+        
         self.view.addSubview(popvc.view)
         
         popvc.didMove(toParent: self)
         
-     
+        
         //        popvc.showAnimate()
     }
     
     
- //MARK: Button SetUp
+    //MARK: Button SetUp
     func buttonSetUp(){
         
-              playButton.layer.applySketchShadow(color: UIColor.black, alpha: 0.5, x: 0, y: 4, blur: 4, spread: 0)
-              
-              playButton.layer.borderWidth = 1
-              
-              playButton.layer.borderColor = UIColor(displayP3Red: 151/255, green: 151/255, blue: 151/255, alpha: 1).cgColor
-              
+        playButton.layer.applySketchShadow(color: UIColor.black, alpha: 0.5, x: 0, y: 4, blur: 4, spread: 0)
+        
+        playButton.layer.borderWidth = 1
+        
+        playButton.layer.borderColor = UIColor(displayP3Red: 151/255, green: 151/255, blue: 151/255, alpha: 1).cgColor
+        
     }
-//    }
+    
+    @IBAction func unwindToMain(_ sender: UIStoryboardSegue){
+        
+    }
+    
+    override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, sender: Any?) -> Bool {
+        for v in self.view.subviews{
+                if v.tag == 5{
+                    v.removeFromSuperview()
+                }
+                
+            }
+            return true
+        }
+    }
+        
+    //    }
     /*
      // MARK: - Navigation
      
@@ -61,4 +80,4 @@ class MainViewController: UIViewController {
      }
      */
     
-}
+

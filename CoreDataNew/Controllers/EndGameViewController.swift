@@ -18,17 +18,29 @@ class EndGameViewController: UIViewController {
     
     @IBOutlet weak var quitButton: UIButton!
     
+    var loose = false
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         shadowSetup()
+        
+        if loose == true{
+            winOrLoseLabel.text = "You lose!"
+        }else{
+             winOrLoseLabel.text = "You Won!"
+        }
     }
     
 
     @IBAction func quitButton(_ sender: Any) {
-        self.performSegue(withIdentifier: "restartSID", sender: self)
+//        navigationController?.popToRootViewController(animated: false)
+//        
+//        self.performSegue(withIdentifier: "restartSID", sender: self)
+        
     }
+    
+    
     
     func shadowSetup(){
         backView.layer.applySketchShadow(color: UIColor.black, alpha: 0.5, x: 0, y: 4, blur: 4, spread: 0)
@@ -80,11 +92,21 @@ class EndGameViewController: UIViewController {
     //MARK:SEGUE
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       
+        
+//         navigationController?.removeFromParent()
+//        navigationController?.dismiss(animated: false, completion: nil)
+//        navigationController?.dismiss(animated: false, completion: nil)
     if segue.identifier == "restartSID"{
         print("going back")
-        //FIXME:SOME RESTART LOGIC 
+        //FIXME:SOME RESTART LOGIC
+        let game = segue.destination as? popUpViewController
+        game?.removeAnimate()
+        
     }
     }
+    
+   
     /*
     // MARK: - Navigation
 

@@ -140,7 +140,7 @@ class GameViewController: UIViewController {
         
         
         
-        checkIfLastAlive()
+        
     }
     
     
@@ -317,7 +317,7 @@ class GameViewController: UIViewController {
         createPlayers()
         
         for player in listOfPlayers{
-            for _ in 0 ..< 20{
+            for _ in 0 ..< 25{
                 
                 homeStack.serve(player: player)
                 
@@ -438,9 +438,9 @@ class GameViewController: UIViewController {
         animatedCardArray = cardsToServe.map { (Card) -> AnimatedCard in
             do{
                 if cardsToServe.firstIndex(of: Card)! <= 4{
-                let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
-                elixirDropIdx += 1
-                return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
+                    let dataImage =  try Data(contentsOf: URL(string: Card.imageUrl)!)
+                    elixirDropIdx += 1
+                    return AnimatedCard(image: UIImage(data: dataImage),selectedCard: &selectedAnimatedCard, function: checkPlayerStackAndSelectedCardToDisable, idName: Card.idName!, elixirCost: Card.elixirCost!,elxCardIdx: &elixirDropIdx, parent: self)
                 }
                 return AnimatedCard(image: nil)
             }catch{
@@ -617,6 +617,8 @@ class GameViewController: UIViewController {
             
             ///Checks player stack in order to hand more if needed
             checkNumberOfCardsAndServe()
+            
+            checkIfLastAlive()
         }
         
         print("Data recieved")
@@ -735,9 +737,9 @@ class GameViewController: UIViewController {
             setUpCircleView(Color.green, Color.green)
         }
     }
-    //FIXME: NEED UPDATE
+    //For now it just refills 4 times, need a back up deck
     func checkNumberOfCardsAndServe(){
-        if listOfPlayers[playerIndex!].playerStack.listStack.count % 5 == 0 && listOfPlayers[playerIndex!].playerStack.listStack.count != 20{
+        if listOfPlayers[playerIndex!].playerStack.listStack.count % 5 == 0 && listOfPlayers[playerIndex!].playerStack.listStack.count != 25{
             
             mapToAnimatedCardsAndServe()
             
@@ -745,33 +747,62 @@ class GameViewController: UIViewController {
     }
     
     //MARK:End Game
-    //FIXME: NEED UPDATE
+    
     ///If the player is the last alive, then a pop up will appear telling you that you won. And will give the option to either quit or play again
     func checkIfLastAlive(){
-//        if turnsStructure.traverse() == 1 && listOfPlayers[turnsStructure.retrieveTurn()].peerID == appDelegate?.mpcHandler.mcSession.myPeerID{
-            
-            
-            let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end") as! EndGameViewController
-        
-    
-        
-        navigationController?.present(popVC, animated: true, completion: nil)
-        
-//            self.addChild(popvc)
-//
-//            popvc.view.frame = self.view.frame
-//
-//            self.view.addSubview(popvc.view)
-//
-//            popvc.didMove(toParent: self)
-        
-//        }
+        if turnsStructure.traverse() == 1 {
+            if listOfPlayers[turnsStructure.retrieveTurn()].peerID == appDelegate?.mpcHandler.mcSession.myPeerID{
+                
+                let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end")
+
+                
+                //FIXME: SOME TWEAKS
+                popvc.modalPresentationStyle = .overCurrentContext
+                
+                //change presentation
+                popvc.modalTransitionStyle = .flipHorizontal
+                
+                popvc.popoverPresentationController?.delegate = self
+                popvc.popoverPresentationController?.sourceView = self.view // button
+                popvc.popoverPresentationController?.sourceRect = self.view.frame
+                
+                self.present(popvc, animated: true, completion: nil)
+                
+//                popvc.loose = false
+              
+            }else{
+                //FIXME:PLACE HOLDER
+                print("You Lose Place Holder")
+                
+                let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end")
+                
+                
+                //FIXME: SOME TWEAKS
+                popvc.modalPresentationStyle = .overCurrentContext
+                
+                //change presentation
+                popvc.modalTransitionStyle = .flipHorizontal
+                
+                popvc.popoverPresentationController?.delegate = self
+                popvc.popoverPresentationController?.sourceView = self.view // button
+                popvc.popoverPresentationController?.sourceRect = self.view.frame
+                
+                self.present(popvc, animated: true, completion: nil)
+                
+//                 popvc.loose = true
+                
+            }
+        }
     }
     
     ///This function will keep a W/L ratio, stored in the user defaults
     func willSaveResultUserDefaults(){
         
     }
+    
+    //MARK:GAME DYNAMICS
+    
+    
     
     //MARK: CHANGED STATE NOTIFICATION
     ///Function runned by the obverver in charge of state changes in session, it will only fire if player state is connected
@@ -937,4 +968,11 @@ extension GameViewController : MCBrowserViewControllerDelegate{
     }
     
     
+}
+
+extension GameViewController:UIPopoverPresentationControllerDelegate{
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        // Force popover style
+        return UIModalPresentationStyle.none
+    }
 }

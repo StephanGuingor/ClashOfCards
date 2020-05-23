@@ -108,7 +108,7 @@ class GameViewController: UIViewController {
         UserDefaults.standard.set(56, forKey: "score")
         let getVar  = UserDefaults.standard.double(forKey: "score")
         print(getVar)
-        
+       
         //ReadyUpButtonSetUp
         //         checkDebugWhoIsConnected.isHidden = true DEBUG
         setUpCircleView(Color.red,Color.red)
@@ -751,45 +751,56 @@ class GameViewController: UIViewController {
     ///If the player is the last alive, then a pop up will appear telling you that you won. And will give the option to either quit or play again
     func checkIfLastAlive(){
         if turnsStructure.traverse() == 1 {
+            
+            
             if listOfPlayers[turnsStructure.retrieveTurn()].peerID == appDelegate?.mpcHandler.mcSession.myPeerID{
+//
+                appDelegate?.mpcHandler.mcSession.disconnect()
                 
-                let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end")
+                let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end") as! EndGameViewController
 
                 
                 //FIXME: SOME TWEAKS
                 popvc.modalPresentationStyle = .overCurrentContext
                 
                 //change presentation
-                popvc.modalTransitionStyle = .flipHorizontal
+                popvc.modalTransitionStyle = .coverVertical
                 
                 popvc.popoverPresentationController?.delegate = self
                 popvc.popoverPresentationController?.sourceView = self.view // button
                 popvc.popoverPresentationController?.sourceRect = self.view.frame
                 
+                
+               
+                
                 self.present(popvc, animated: true, completion: nil)
                 
-//                popvc.loose = false
+                
               
             }else{
-                //FIXME:PLACE HOLDER
+//                FIXME:PLACE HOLDER and RESTART
                 print("You Lose Place Holder")
+                appDelegate?.mpcHandler.mcSession.disconnect()
                 
-                let popvc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "popUp_end")
+                let popvc = UIStoryboard(name: "Main", bundle: nil)
+                    .instantiateViewController(withIdentifier: "popUp_end2") as! EndLoseViewController
                 
                 
                 //FIXME: SOME TWEAKS
                 popvc.modalPresentationStyle = .overCurrentContext
                 
                 //change presentation
-                popvc.modalTransitionStyle = .flipHorizontal
+                popvc.modalTransitionStyle = .coverVertical
                 
                 popvc.popoverPresentationController?.delegate = self
                 popvc.popoverPresentationController?.sourceView = self.view // button
                 popvc.popoverPresentationController?.sourceRect = self.view.frame
                 
+                
+                
                 self.present(popvc, animated: true, completion: nil)
                 
-//                 popvc.loose = true
+                 
                 
             }
         }

@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="unicode.impact.ttf">
+        <array key="Impacted.ttf">
             <string>Impact</string>
         </array>
     </customFonts>
@@ -651,7 +651,7 @@
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="quitButton:" destination="7yt-ad-7Wc" eventType="touchUpInside" id="xzF-FD-pPk"/>
-                                            <segue destination="Igd-mA-NLu" kind="unwind" unwindAction="unwindToMain:" id="nuk-6y-jnp"/>
+                                            <segue destination="Igd-mA-NLu" kind="unwind" unwindAction="unwindToMain:" id="vQS-dX-pNs"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You Won!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jTc-SP-62P">
@@ -699,6 +699,85 @@
                 <exit id="Igd-mA-NLu" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-442" y="851"/>
+        </scene>
+        <!--End Game Controller2-->
+        <scene sceneID="KXt-g1-bfo">
+            <objects>
+                <viewController storyboardIdentifier="popUp_end2" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wnu-S4-NmF" userLabel="End Game Controller2" customClass="EndLoseViewController" customModule="CoreDataNew" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="xML-KR-Bbo">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view alpha="0.60000002384185791" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S46-wm-ROG">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DhK-JZ-iNJ">
+                                <rect key="frame" x="67.5" y="306.5" width="279" height="202"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e4D-5K-EyS">
+                                        <rect key="frame" x="36" y="116.5" width="207" height="50"/>
+                                        <color key="backgroundColor" red="0.27722615" green="0.58888250590000002" blue="0.51717525720000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="25"/>
+                                        <state key="normal" title="Quit">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="5"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="quitButton:" destination="wnu-S4-NmF" eventType="touchUpInside" id="8R9-TQ-nJW"/>
+                                            <segue destination="wfA-QS-JXJ" kind="unwind" unwindAction="unwindToMain:" id="h9X-qE-gnK"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You Lose!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cql-QA-WmC">
+                                        <rect key="frame" x="60" y="10" width="159" height="64"/>
+                                        <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="35"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.03634813428" green="0.1460377276" blue="0.20416039229999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="e4D-5K-EyS" firstAttribute="height" secondItem="DhK-JZ-iNJ" secondAttribute="height" multiplier="0.247525" id="FET-Sj-wfO"/>
+                                    <constraint firstItem="e4D-5K-EyS" firstAttribute="centerX" secondItem="DhK-JZ-iNJ" secondAttribute="centerX" id="NNg-ai-54n"/>
+                                    <constraint firstItem="e4D-5K-EyS" firstAttribute="width" secondItem="DhK-JZ-iNJ" secondAttribute="width" multiplier="0.741935" id="OYI-0r-Dbv"/>
+                                    <constraint firstItem="e4D-5K-EyS" firstAttribute="centerY" secondItem="DhK-JZ-iNJ" secondAttribute="centerY" multiplier="1.4" id="QUR-NV-fzh"/>
+                                    <constraint firstItem="cql-QA-WmC" firstAttribute="top" secondItem="DhK-JZ-iNJ" secondAttribute="top" constant="10" id="gdU-mG-0sV"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="S46-wm-ROG" firstAttribute="height" secondItem="XhH-Yb-OVn" secondAttribute="height" id="8xZ-Bf-MWD"/>
+                            <constraint firstItem="DhK-JZ-iNJ" firstAttribute="width" secondItem="XhH-Yb-OVn" secondAttribute="width" multiplier="0.673913" id="BUQ-EZ-EyJ"/>
+                            <constraint firstItem="cql-QA-WmC" firstAttribute="centerX" secondItem="XhH-Yb-OVn" secondAttribute="centerX" id="HTI-cZ-WB7"/>
+                            <constraint firstItem="cql-QA-WmC" firstAttribute="height" secondItem="XhH-Yb-OVn" secondAttribute="height" multiplier="0.0782396" id="IO8-Xh-4QG"/>
+                            <constraint firstItem="DhK-JZ-iNJ" firstAttribute="centerX" secondItem="XhH-Yb-OVn" secondAttribute="centerX" id="IfP-VG-TxA"/>
+                            <constraint firstItem="S46-wm-ROG" firstAttribute="centerX" secondItem="XhH-Yb-OVn" secondAttribute="centerX" id="NfV-BG-ahx"/>
+                            <constraint firstItem="DhK-JZ-iNJ" firstAttribute="height" secondItem="XhH-Yb-OVn" secondAttribute="height" multiplier="0.246944" id="Pst-aE-9RE"/>
+                            <constraint firstItem="cql-QA-WmC" firstAttribute="width" secondItem="XhH-Yb-OVn" secondAttribute="width" multiplier="0.384058" id="QL9-Ta-5vu"/>
+                            <constraint firstItem="S46-wm-ROG" firstAttribute="width" secondItem="XhH-Yb-OVn" secondAttribute="width" id="g3m-aS-JmJ"/>
+                            <constraint firstItem="S46-wm-ROG" firstAttribute="centerY" secondItem="XhH-Yb-OVn" secondAttribute="centerY" id="qlR-YH-2eF"/>
+                            <constraint firstItem="DhK-JZ-iNJ" firstAttribute="centerY" secondItem="XhH-Yb-OVn" secondAttribute="centerY" multiplier="0.9" id="wt3-uc-0Bm"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="XhH-Yb-OVn"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="xuW-cG-0yu"/>
+                    <connections>
+                        <outlet property="backView" destination="DhK-JZ-iNJ" id="EPJ-GR-4cG"/>
+                        <outlet property="lastView" destination="S46-wm-ROG" id="uv0-eX-34R"/>
+                        <outlet property="quitButton" destination="e4D-5K-EyS" id="5Rg-ET-kgp"/>
+                        <outlet property="winOrLoseLabel" destination="cql-QA-WmC" id="kTz-Tw-p70"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ala-iU-AN5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="wfA-QS-JXJ" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="-1283" y="850"/>
         </scene>
     </scenes>
     <resources>

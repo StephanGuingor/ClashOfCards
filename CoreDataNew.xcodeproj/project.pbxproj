@@ -24,6 +24,7 @@
 		D45F1751238DA278003DA94C /* HomeStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1750238DA278003DA94C /* HomeStack.swift */; };
 		D45F1753238DA2BE003DA94C /* PlayerStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1752238DA2BE003DA94C /* PlayerStack.swift */; };
 		D45F1755238DA30B003DA94C /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1754238DA30B003DA94C /* PlayerModel.swift */; };
+		D45F1F06239B047B00880D02 /* EndLoseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45F1F05239B047B00880D02 /* EndLoseViewController.swift */; };
 		D4661210238B1001000D4C16 /* CircleGameLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D466120F238B1001000D4C16 /* CircleGameLiveView.swift */; };
 		D48419AA2385BE1800FC2298 /* Impacted.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419A82385BE1800FC2298 /* Impacted.ttf */; };
 		D48419AB2385BE1800FC2298 /* impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D48419A92385BE1800FC2298 /* impact.ttf */; };
@@ -62,6 +63,7 @@
 		D45F1750238DA278003DA94C /* HomeStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStack.swift; sourceTree = "<group>"; };
 		D45F1752238DA2BE003DA94C /* PlayerStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStack.swift; sourceTree = "<group>"; };
 		D45F1754238DA30B003DA94C /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
+		D45F1F05239B047B00880D02 /* EndLoseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndLoseViewController.swift; sourceTree = "<group>"; };
 		D466120F238B1001000D4C16 /* CircleGameLiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleGameLiveView.swift; sourceTree = "<group>"; };
 		D48419A82385BE1800FC2298 /* Impacted.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Impacted.ttf; sourceTree = "<group>"; };
 		D48419A92385BE1800FC2298 /* impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = impact.ttf; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				D48419B32385C83500FC2298 /* popUpViewController.swift */,
 				D48419B52385EF9000FC2298 /* GameViewController.swift */,
 				D4550F332397873900FC6D0A /* EndGameViewController.swift */,
+				D45F1F05239B047B00880D02 /* EndLoseViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				D45461842379B9FA00466D70 /* CoreDataNew.xcdatamodeld in Sources */,
 				D421C8FF237DEDD600BC1D12 /* Stack.swift in Sources */,
 				D4AC8EFD238F73A10054F863 /* UIViewExtensionBorders.swift in Sources */,
+				D45F1F06239B047B00880D02 /* EndLoseViewController.swift in Sources */,
 				D48419B42385C83500FC2298 /* popUpViewController.swift in Sources */,
 				D45461922379BA9700466D70 /* CoreDataService.swift in Sources */,
 				D4661210238B1001000D4C16 /* CircleGameLiveView.swift in Sources */,

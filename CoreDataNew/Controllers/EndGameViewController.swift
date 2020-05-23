@@ -18,24 +18,30 @@ class EndGameViewController: UIViewController {
     
     @IBOutlet weak var quitButton: UIButton!
     
-    var loose = false
+    
+    
+    var appD:AppDelegate!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         shadowSetup()
         
-        if loose == true{
-            winOrLoseLabel.text = "You lose!"
-        }else{
-             winOrLoseLabel.text = "You Won!"
-        }
+     
+        winOrLoseLabel.text = "You Won!"
+    
+        
+       
+        
+        
     }
     
 
     @IBAction func quitButton(_ sender: Any) {
-//        navigationController?.popToRootViewController(animated: false)
-//        
+        
+//        navigationController?.popToRootViewController(animated: true)
+        
+      
 //        self.performSegue(withIdentifier: "restartSID", sender: self)
         
     }
